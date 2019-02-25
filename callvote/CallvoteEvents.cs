@@ -32,6 +32,8 @@ namespace Callvote
 						string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Command), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
 							.Cast<Match>()
 							.Select(m => m.Value)
+							.ToArray()
+							.Skip(1)
 							.ToArray();
 						this.plugin.startVote(ev.Player, quotedArgs);
 						ev.ReturnMessage = "Vote started!";

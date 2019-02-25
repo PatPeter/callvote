@@ -13,7 +13,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.5",
+		version = "1.0.0.6",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -116,11 +116,11 @@ namespace Callvote
 								this.Info("Multiple-choice vote called by " + player.Name + ": " + string.Join(" ", args));
 								for (int i = 1; i < args.Length; i++)
 								{
-									options[i - 1] = args[i];
+									options[i] = args[i];
 								}
 							}
 
-							currentVote = new Vote(args[1], options);
+							currentVote = new Vote(args[0], options);
 							string firstBroadcast = currentVote.question + " Press ~ and type ";
 							int counter = 0;
 							foreach (KeyValuePair<int, string> kv in currentVote.options)
@@ -152,12 +152,19 @@ namespace Callvote
 								}
 								else if (timerCounter >= 31)
 								{
+									string timerBroadcast = "Final results:\n";
+									foreach (KeyValuePair<int, string> kv in currentVote.options)
+									{
+										timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
+									}
+									this.Server.Map.Broadcast(5, timerBroadcast, false);
+
 									currentVote.timer.Enabled = false;
 									currentVote = null;
 								}
 								else
 								{
-									string timerBroadcast = firstBroadcast + " ";
+									string timerBroadcast = firstBroadcast + "\n";
 									foreach (KeyValuePair<int, string> kv in currentVote.options)
 									{
 										timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
