@@ -13,7 +13,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.4",
+		version = "1.1.0.5",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -62,6 +62,11 @@ namespace Callvote
 
 		public string startVote(Player player, string[] args)
 		{
+			this.Info(player.Name + " called vote with arguments: ");
+			for (int i = 0; i < args.Length; i++)
+			{
+				this.Info("\t" + i + ": " + args[i]);
+			}
 			if (args.Length == 0)
 			{
 				//return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
@@ -109,30 +114,28 @@ namespace Callvote
 							else
 							{
 								this.Info("Multiple-choice vote called by " + player.Name + ": " + string.Join(" ", args));
-								for (int i = 2; i < args.Length; i++)
+								for (int i = 1; i < args.Length; i++)
 								{
 									options[i - 1] = args[i];
 								}
 							}
 
 							currentVote = new Vote(args[1], options);
+							string firstBroadcast = currentVote.question + " Press ~ and type ";
+							int counter = 0;
+							foreach (KeyValuePair<int, string> kv in currentVote.options)
 							{
-								string firstBroadcast = currentVote.question + " Press ~ and type ";
-								int counter = 0;
-								foreach (KeyValuePair<int, string> kv in currentVote.options)
+								if (counter == currentVote.options.Count - 1)
 								{
-									if (counter == currentVote.options.Count - 1)
-									{
-										firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
-									}
-									else
-									{
-										firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
-									}
-									counter++;
+									firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
 								}
-								this.Server.Map.Broadcast(5, firstBroadcast, false);
+								else
+								{
+									firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
+								}
+								counter++;
 							}
+							this.Server.Map.Broadcast(5, firstBroadcast, false);
 
 							int timerCounter = 0;
 							currentVote.timer = new Timer
@@ -147,17 +150,17 @@ namespace Callvote
 								{
 									currentVote.timer.Interval = 1000;
 								}
-								else if (timerCounter >= 21)
+								else if (timerCounter >= 31)
 								{
 									currentVote.timer.Enabled = false;
 									currentVote = null;
 								}
 								else
 								{
-									string timerBroadcast = "";
-									foreach (KeyValuePair<int, int> kv in currentVote.counter)
+									string timerBroadcast = firstBroadcast + " ";
+									foreach (KeyValuePair<int, string> kv in currentVote.options)
 									{
-										timerBroadcast += currentVote.options[kv.Key] + " (" + kv.Value + ") ";
+										timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
 									}
 									this.Server.Map.Broadcast(1, timerBroadcast, false);
 								}

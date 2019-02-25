@@ -18,7 +18,8 @@ namespace Callvote
 
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
-			switch (ev.Command)
+			string command = ev.Command.Split(' ')[0];
+			switch (command)
 			{
 				case "callvote":
 					if (this.plugin.currentVote != null)
