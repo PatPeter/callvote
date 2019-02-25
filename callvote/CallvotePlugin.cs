@@ -13,7 +13,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.2",
+		version = "1.1.0.3",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -31,7 +31,6 @@ namespace Callvote
 		public override void OnEnable()
 		{
 			this.Info(this.Details.name + " has loaded :)");
-			this.Info("Config value: " + this.GetConfigString("myConfigKey"));
 		}
 
 		public override void Register()
@@ -98,24 +97,25 @@ namespace Callvote
 							}
 
 						default:
-							this.Info("Vote called by " + player.Name + ": " + string.Join(" ", args));
 							//voteInProgress = true;
 
 							Dictionary<int, string> options = new Dictionary<int, string>();
 							if (args.Length == 1)
 							{
+								this.Info("Binary vote called by " + player.Name + ": " + string.Join(" ", args));
 								options[1] = "yes";
 								options[2] = "no";
 							}
 							else
 							{
-								this.Info("Vote called by " + player.Name + ": " + string.Join(" ", args));
+								this.Info("Multiple-choice vote called by " + player.Name + ": " + string.Join(" ", args));
 								for (int i = 2; i < args.Length; i++)
 								{
 									options[i - 1] = args[i];
 								}
 							}
 
+							currentVote = new Vote(args[1], options);
 							{
 								string firstBroadcast = currentVote.question + " Press ~ and type ";
 								int counter = 0;
@@ -135,7 +135,6 @@ namespace Callvote
 							}
 
 							int timerCounter = 0;
-							currentVote = new Vote(args[1], options);
 							currentVote.timer = new Timer
 							{
 								Interval = 5000,
@@ -151,6 +150,7 @@ namespace Callvote
 								else if (timerCounter >= 20)
 								{
 									currentVote.timer.Enabled = false;
+									currentVote = null;
 								}
 								else
 								{
