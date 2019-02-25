@@ -23,42 +23,17 @@ namespace Callvote
 			switch (command)
 			{
 				case "callvote":
-					if (this.plugin.currentVote != null)
-					{
-						ev.ReturnMessage = "There is currently a vote in progress.";
-					}
-					else
-					{
-						string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Command), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
-							.Cast<Match>()
-							.Select(m => m.Value)
-							.ToArray()
-							.Skip(1)
-							.ToArray();
-						this.plugin.startVote(ev.Player, quotedArgs);
-						ev.ReturnMessage = "Vote started!";
-					}
+					string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Command), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
+						.Cast<Match>()
+						.Select(m => m.Value)
+						.ToArray()
+						.Skip(1)
+						.ToArray();
+					ev.ReturnMessage = this.plugin.startVote(ev.Player, quotedArgs);
 					break;
 
 				case "stopvote":
-					if (this.plugin.currentVote != null)
-					{
-						if (this.plugin.currentVote.timer != null)
-						{
-							this.plugin.currentVote.timer.Stop();
-							this.plugin.currentVote = null;
-							ev.ReturnMessage = "Vote stopped.";
-						}
-						else
-						{
-							this.plugin.currentVote = null;
-							ev.ReturnMessage = "Vote stopped.";
-						}
-					}
-					else
-					{
-						ev.ReturnMessage = "There is not a vote in progress.";
-					}
+					ev.ReturnMessage = this.plugin.stopVote(ev.Player);
 					break;
 
 				case "1":

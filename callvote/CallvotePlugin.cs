@@ -14,7 +14,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.0.0.8",
+		version = "1.0.0.9",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
