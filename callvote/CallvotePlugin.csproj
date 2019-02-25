@@ -7,8 +7,8 @@
     <ProjectGuid>{0952A53A-A70E-4DAA-86A6-6560F2F3607B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CallvotePlugin</RootNamespace>
-    <AssemblyName>CallvotePlugin</AssemblyName>
+    <RootNamespace>Callvote</RootNamespace>
+    <AssemblyName>callvote</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CallvoteCommand.cs" />
     <Compile Include="CallvotePlugin.cs" />
+    <Compile Include="CallvoteEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

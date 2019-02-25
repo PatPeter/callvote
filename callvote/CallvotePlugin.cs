@@ -13,15 +13,15 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.0.0.0",
+		version = "1.1.0.2",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
 		)]
 	class CallvotePlugin : Plugin
 	{
-		bool voteInProgress = false;
-		Vote currentVote = null;
+		//bool voteInProgress = false;
+		public Vote currentVote = null;
 
 		public override void OnDisable()
 		{
@@ -39,7 +39,7 @@ namespace Callvote
 			// Register multiple events
 			//this.AddEventHandlers(new RoundEventHandler(this));
 			//Register multiple events with Low Priority
-			//this.AddEventHandlers(new MultipleEventsExample(this), Priority.Low);
+			this.AddEventHandlers(new CallvoteEvents(this), Priority.Normal);
 			// Register single event with priority (need to specify the handler type)
 			//this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new LottoItemHandler(this), Priority.High);
 			// Register Command(s)
@@ -61,17 +61,19 @@ namespace Callvote
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, Smod2.Config.SettingType.NUMERIC, true, ""));
 		}
 
-		public string[] startVote(Player player, string[] args)
+		public string startVote(Player player, string[] args)
 		{
 			if (args.Length == 0)
 			{
-				return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
+				//return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
+				return "callvote RestartRound/Kick/<custom> <player>/[options]";
 			}
 			else
 			{
-				if (voteInProgress)
+				if (currentVote != null)
 				{
-					return new string[] { "A vote is currently in progress." };
+					//return new string[] { "A vote is currently in progress." };
+					return "A vote is currently in progress.";
 				}
 				else
 				{
@@ -79,22 +81,25 @@ namespace Callvote
 					{
 						case "RestartRound":
 							this.Info("Vote called by " + player.Name + " to " + args[1]);
-							return new string[] { "To be implemented." };
+							//return new string[] { "To be implemented." };
+							return "To be implemented.";
 
 						case "Kick":
 							if (args.Length == 1)
 							{
-								return new string[] { "callvote Kick <player>" };
+								//return new string[] { "callvote Kick <player>" };
+								return "callvote Kick <player>";
 							}
 							else
 							{
 								this.Info("Vote called by " + player.Name + " to " + args[1] + " player " + args[2]);
-								return new string[] { "To be implemented." };
+								//return new string[] { "To be implemented." };
+								return "To be implemented.";
 							}
 
 						default:
 							this.Info("Vote called by " + player.Name + ": " + string.Join(" ", args));
-							voteInProgress = true;
+							//voteInProgress = true;
 
 							Dictionary<int, string> options = new Dictionary<int, string>();
 							if (args.Length == 1)
@@ -157,31 +162,33 @@ namespace Callvote
 									this.Server.Map.Broadcast(1, timerBroadcast, false);
 								}
 							};
-							return new string[] { "Vote has been started!" };
+							//return new string[] { "Vote has been started!" };
+							return "Vote has been started!";
 					}
 				}
 			}
 		}
 
-		public string[] handleVote(Player player, int option)
+		public string handleVote(Player player, int option)
 		{
-			if (voteInProgress && currentVote != null)
+			if (currentVote != null)
 			{
 				if (!currentVote.votes.Contains(player.SteamId))
 				{
 					currentVote.counter[option]++;
 					currentVote.votes.Add(player.SteamId);
 					this.Info("Player " + player.Name + " voted " + currentVote.options[option] + " bringing the counter to " + currentVote.counter[option]);
-					return new string[] { "Vote accepted!" };
+					//return new string[] { "Vote accepted!" };
+					return "Vote accepted!";
 				}
 				else
 				{
-					return new string[] { "You've already voted." };
+					return "You've already voted.";
 				}
 			}
 			else
 			{
-				return new string[] { "There is no vote in progress." };
+				return "There is no vote in progress.";
 			}
 		}
 	}
