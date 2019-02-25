@@ -13,7 +13,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.3",
+		version = "1.1.0.4",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -147,7 +147,7 @@ namespace Callvote
 								{
 									currentVote.timer.Interval = 1000;
 								}
-								else if (timerCounter >= 20)
+								else if (timerCounter >= 21)
 								{
 									currentVote.timer.Enabled = false;
 									currentVote = null;
@@ -161,6 +161,7 @@ namespace Callvote
 									}
 									this.Server.Map.Broadcast(1, timerBroadcast, false);
 								}
+								timerCounter++;
 							};
 							//return new string[] { "Vote has been started!" };
 							return "Vote has been started!";

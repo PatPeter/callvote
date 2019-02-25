@@ -21,8 +21,7 @@ namespace Callvote
 			switch (ev.Command)
 			{
 				case "callvote":
-
-					if (this.plugin.currentVote == null)
+					if (this.plugin.currentVote != null)
 					{
 						ev.ReturnMessage = "There is currently a vote in progress.";
 					}
@@ -32,6 +31,27 @@ namespace Callvote
 						string[] args = new string[quoteDelimitedArguments.Count - 1];
 						this.plugin.startVote(ev.Player, args);
 						ev.ReturnMessage = "Vote started!";
+					}
+					break;
+
+				case "stopvote":
+					if (this.plugin.currentVote != null)
+					{
+						if (this.plugin.currentVote.timer != null)
+						{
+							this.plugin.currentVote.timer.Stop();
+							this.plugin.currentVote = null;
+							ev.ReturnMessage = "Vote stopped.";
+						}
+						else
+						{
+							this.plugin.currentVote = null;
+							ev.ReturnMessage = "Vote stopped.";
+						}
+					}
+					else
+					{
+						ev.ReturnMessage = "There is not a vote in progress.";
 					}
 					break;
 
