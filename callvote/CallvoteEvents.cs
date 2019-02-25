@@ -4,6 +4,7 @@ using Smod2;
 using Smod2.API;
 using Smod2.EventHandlers;
 using Smod2.Events;
+using System.Linq;
 
 namespace Callvote
 {
@@ -28,9 +29,11 @@ namespace Callvote
 					}
 					else
 					{
-						MatchCollection quoteDelimitedArguments = new Regex("[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'").Matches(ev.Command);
-						string[] args = new string[quoteDelimitedArguments.Count - 1];
-						this.plugin.startVote(ev.Player, args);
+						string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Command), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
+							.Cast<Match>()
+							.Select(m => m.Value)
+							.ToArray();
+						this.plugin.startVote(ev.Player, quotedArgs);
 						ev.ReturnMessage = "Vote started!";
 					}
 					break;
@@ -122,6 +125,10 @@ namespace Callvote
 
 		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
 		{
+			if (this.plugin.currentVote != null && this.plugin.currentVote.timer != null)
+			{
+				this.plugin.currentVote.timer.Stop();
+			}
 			this.plugin.currentVote = null;
 			//plugin.RefreshConfig();
 		}
