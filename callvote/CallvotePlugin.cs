@@ -13,7 +13,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.0.0.6",
+		version = "1.0.0.7",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -43,6 +43,7 @@ namespace Callvote
 			//this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new LottoItemHandler(this), Priority.High);
 			// Register Command(s)
 			this.AddCommand("callvote", new CallvoteCommand(this));
+			this.AddCommand("stopvote", new StopvoteCommand(this));
 			this.AddCommand("1", new Vote1Command(this));
 			this.AddCommand("2", new Vote2Command(this));
 			this.AddCommand("3", new Vote3Command(this));
@@ -180,17 +181,45 @@ namespace Callvote
 			}
 		}
 
+		public string stopVote(Player player)
+		{
+			if (this.currentVote != null)
+			{
+				if (this.currentVote.timer != null)
+				{
+					this.currentVote.timer.Stop();
+					this.currentVote = null;
+					return "Vote stopped.";
+				}
+				else
+				{
+					this.currentVote = null;
+					return "Vote stopped.";
+				}
+			}
+			else
+			{
+				return "There is not a vote in progress.";
+			}
+		}
+
 		public string handleVote(Player player, int option)
 		{
 			if (currentVote != null)
 			{
 				if (!currentVote.votes.Contains(player.SteamId))
 				{
-					currentVote.counter[option]++;
-					currentVote.votes.Add(player.SteamId);
-					this.Info("Player " + player.Name + " voted " + currentVote.options[option] + " bringing the counter to " + currentVote.counter[option]);
-					//return new string[] { "Vote accepted!" };
-					return "Vote accepted!";
+					if (currentVote.options.ContainsKey(option))
+					{
+						currentVote.counter[option]++;
+						currentVote.votes.Add(player.SteamId);
+						this.Info("Player " + player.Name + " voted " + currentVote.options[option] + " bringing the counter to " + currentVote.counter[option]);
+						//return new string[] { "Vote accepted!" };
+						return "Vote accepted!";
+					} else
+					{
+						return "Vote does not have an option " + option + ".";
+					}
 				}
 				else
 				{

@@ -76,46 +76,45 @@ namespace Callvote
 						switch (ev.Command)
 						{
 							case "1":
-								this.plugin.handleVote(ev.Player, 1);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 1);
 								break;
 
 							case "2":
-								this.plugin.handleVote(ev.Player, 2);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 2);
 								break;
 
 							case "3":
-								this.plugin.handleVote(ev.Player, 3);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 3);
 								break;
 
 							case "4":
-								this.plugin.handleVote(ev.Player, 4);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 4);
 								break;
 
 							case "5":
-								this.plugin.handleVote(ev.Player, 5);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 5);
 								break;
 
 							case "6":
-								this.plugin.handleVote(ev.Player, 6);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 6);
 								break;
 
 							case "7":
-								this.plugin.handleVote(ev.Player, 7);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 7);
 								break;
 
 							case "8":
-								this.plugin.handleVote(ev.Player, 8);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 8);
 								break;
 
 							case "9":
-								this.plugin.handleVote(ev.Player, 9);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 9);
 								break;
 
 							case "0":
-								this.plugin.handleVote(ev.Player, 10);
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 10);
 								break;
 						}
-						ev.ReturnMessage = "Vote submitted!";
 					}
 					else
 					{

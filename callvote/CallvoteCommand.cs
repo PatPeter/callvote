@@ -18,13 +18,13 @@ namespace Callvote
 		public string GetCommandDescription()
 		{
 			// This prints when someone types HELP HELLO
-			return "Prints hello world";
+			return "Starts a vote.";
 		}
 
 		public string GetUsage()
 		{
 			// This prints when someone types HELP HELLO
-			return "HELLO";
+			return "CALLVOTE Kick/RestartRound/<custom> <player>/[options]";
 		}
 
 		public string[] OnCall(ICommandSender sender, string[] args)
@@ -38,6 +38,36 @@ namespace Callvote
 				.ToArray();
 			//string[] quotedArgs = new string[quoteDelimitedArguments.Count - 1];
 			return new string[] { this.plugin.startVote(caller, quotedArgs) };
+		}
+	}
+	class StopvoteCommand : ICommandHandler
+	{
+		private readonly CallvotePlugin plugin;
+
+		public StopvoteCommand(CallvotePlugin plugin)
+		{
+			//Constructor passing plugin refrence to this class
+			this.plugin = plugin;
+		}
+
+		public string GetCommandDescription()
+		{
+			// This prints when someone types HELP HELLO
+			return "Ends a vote.";
+		}
+
+		public string GetUsage()
+		{
+			// This prints when someone types HELP HELLO
+			return "STOPVOTE";
+		}
+
+		public string[] OnCall(ICommandSender sender, string[] args)
+		{
+			//Will be null if command was called by server console
+			Player caller = sender as Player;
+			// This will print 3 lines in console.
+			return new string[] { this.plugin.stopVote(caller) };
 		}
 	}
 
