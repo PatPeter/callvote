@@ -126,12 +126,12 @@ namespace Callvote
 
 		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
 		{
+			plugin.ReloadConfig();
 			if (this.plugin.currentVote != null && this.plugin.currentVote.timer != null)
 			{
 				this.plugin.currentVote.timer.Stop();
 			}
 			this.plugin.currentVote = null;
-			//plugin.RefreshConfig();
 		}
 	}
 }

@@ -3,6 +3,7 @@ using Smod2.API;
 using Smod2.Attributes;
 using Smod2.EventHandlers;
 using Smod2.Events;
+using System;
 using System.Collections.Generic;
 using System.Timers;
 
@@ -13,7 +14,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.0.0.7",
+		version = "1.0.0.8",
 		SmodMajor = 3,
 		SmodMinor = 1,
 		SmodRevision = 20
@@ -23,6 +24,13 @@ namespace Callvote
 		//bool voteInProgress = false;
 		public Vote currentVote = null;
 
+		public string[] allowedRoles = { "owner", "admin", "moderator" };
+		public int voteDuration = 30;
+		public bool enableKick = false;
+		public bool enableRestartRound = false;
+		public int thresholdKick = 80;
+		public int thresholdRestartRound = 80;
+
 		public override void OnDisable()
 		{
 			this.Info(this.Details.name + " was disabled ):");
@@ -31,6 +39,16 @@ namespace Callvote
 		public override void OnEnable()
 		{
 			this.Info(this.Details.name + " has loaded :)");
+		}
+
+		public void ReloadConfig()
+		{
+			allowedRoles = this.GetConfigList("callvote_allowed_roles");
+			voteDuration = this.GetConfigInt("callvote_vote_duration");
+			enableKick = this.GetConfigBool("callvote_enable_kick");
+			enableRestartRound = this.GetConfigBool("callvote_enable_restartround");
+			thresholdKick = this.GetConfigInt("callvote_threshold_kick");
+			thresholdRestartRound = this.GetConfigInt("callvote_threshold_restartround");
 		}
 
 		public override void Register()
@@ -55,14 +73,33 @@ namespace Callvote
 			this.AddCommand("9", new Vote9Command(this));
 			this.AddCommand("0", new Vote0Command(this));
 			// Register config setting(s)
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, Smod2.Config.SettingType.BOOL, true, ""));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, Smod2.Config.SettingType.BOOL, true, ""));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, Smod2.Config.SettingType.NUMERIC, true, ""));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, Smod2.Config.SettingType.NUMERIC, true, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, Smod2.Config.SettingType.LIST, true, "List of role allowed "));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, Smod2.Config.SettingType.NUMERIC, true, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, Smod2.Config.SettingType.BOOL, true, "Enable callvote Kick."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, Smod2.Config.SettingType.BOOL, true, "Enable callvote RestartRound."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, Smod2.Config.SettingType.NUMERIC, true, "The percentage needed to kick a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, Smod2.Config.SettingType.NUMERIC, true, "The percentage needed to restart a round."));
+		}
+
+		public bool canCallVotes(Player player)
+		{
+			foreach (string role in allowedRoles)
+			{
+				if (String.Equals(role, player.GetUserGroup().Name, StringComparison.CurrentCultureIgnoreCase) || String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public string startVote(Player player, string[] args)
 		{
+			if (!canCallVotes(player))
+			{
+				return "You cannot call votes.";
+			}
+
 			this.Info(player.Name + " called vote with arguments: ");
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -109,8 +146,8 @@ namespace Callvote
 							if (args.Length == 1)
 							{
 								this.Info("Binary vote called by " + player.Name + ": " + string.Join(" ", args));
-								options[1] = "yes";
-								options[2] = "no";
+								options[1] = "Yes";
+								options[2] = "No";
 							}
 							else
 							{
@@ -151,7 +188,7 @@ namespace Callvote
 								{
 									currentVote.timer.Interval = 1000;
 								}
-								else if (timerCounter >= 31)
+								else if (timerCounter >= this.voteDuration + 1)
 								{
 									string timerBroadcast = "Final results:\n";
 									foreach (KeyValuePair<int, string> kv in currentVote.options)
@@ -183,6 +220,11 @@ namespace Callvote
 
 		public string stopVote(Player player)
 		{
+			if (!canCallVotes(player))
+			{
+				return "You cannot stop votes.";
+			}
+
 			if (this.currentVote != null)
 			{
 				if (this.currentVote.timer != null)
@@ -233,19 +275,6 @@ namespace Callvote
 		}
 	}
 
-	/*enum OptionEnum {
-		ONE = 1,
-		TWO = 2,
-		THREE = 3,
-		FOUR = 4,
-		FIVE = 5,
-		SIX = 6,
-		SEVEN = 7,
-		EIGHT = 8,
-		NINE = 9,
-		TEN = 0
-	}*/
-
 	class Vote
 	{
 		public string question;
@@ -253,7 +282,6 @@ namespace Callvote
 		public HashSet<string> votes = new HashSet<string>();
 		public Dictionary<int, int> counter = new Dictionary<int, int>();
 		public Timer timer;
-		//public Option[] options;
 
 		public Vote(string question, Dictionary<int, string> options)
 		{
@@ -265,16 +293,4 @@ namespace Callvote
 			}
 		}
 	}
-
-	/*class Option
-	{
-		string text;
-		OptionEnum ordinal;
-
-		public Option(string text, OptionEnum ordinal)
-		{
-			this.text = text;
-			this.ordinal = ordinal;
-		}
-	}*/
 }
