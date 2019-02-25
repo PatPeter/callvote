@@ -1,5 +1,6 @@
 ﻿using Smod2.Commands;
 using Smod2.API;
+using System.Text.RegularExpressions;
 
 namespace Callvote
 {
@@ -30,6 +31,8 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
+			MatchCollection quoteDelimitedArguments = new Regex("[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'").Matches(string.Join(" ", args));
+			string[] quotedArgs = new string[quoteDelimitedArguments.Count - 1];
 			return new string[] { this.plugin.startVote(caller, args) };
 		}
 	}
