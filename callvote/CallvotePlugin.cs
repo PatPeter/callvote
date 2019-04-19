@@ -16,8 +16,8 @@ namespace Callvote
 		id = "patpeter.callvote",
 		version = "1.0.0.9",
 		SmodMajor = 3,
-		SmodMinor = 1,
-		SmodRevision = 20
+		SmodMinor = 2,
+		SmodRevision = 2
 		)]
 	class CallvotePlugin : Plugin
 	{
@@ -95,10 +95,6 @@ namespace Callvote
 
 		public string startVote(Player player, string[] args)
 		{
-			if (!canCallVotes(player))
-			{
-				return "You cannot call votes.";
-			}
 
 			this.Info(player.Name + " called vote with arguments: ");
 			for (int i = 0; i < args.Length; i++)
@@ -141,6 +137,10 @@ namespace Callvote
 
 						default:
 							//voteInProgress = true;
+							if (!canCallVotes(player))
+							{
+								return "You cannot call votes.";
+							}
 
 							Dictionary<int, string> options = new Dictionary<int, string>();
 							if (args.Length == 1)
@@ -188,7 +188,8 @@ namespace Callvote
 								{
 									currentVote.timer.Interval = 1000;
 								}
-								else if (timerCounter >= this.voteDuration + 1)
+
+								if (timerCounter >= this.voteDuration + 1)
 								{
 									string timerBroadcast = "Final results:\n";
 									foreach (KeyValuePair<int, string> kv in currentVote.options)
