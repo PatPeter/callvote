@@ -36,6 +36,8 @@ namespace Callvote
 					ev.ReturnMessage = this.plugin.stopVote(ev.Player);
 					break;
 
+				case "yes":
+				case "no":
 				case "1":
 				case "2":
 				case "3":
@@ -50,6 +52,14 @@ namespace Callvote
 					{
 						switch (ev.Command)
 						{
+							case "yes":
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 1);
+								break;
+
+							case "no":
+								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 2);
+								break;
+
 							case "1":
 								ev.ReturnMessage = this.plugin.handleVote(ev.Player, 1);
 								break;

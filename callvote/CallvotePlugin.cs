@@ -6,6 +6,7 @@ using Smod2.Events;
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using System.Linq;
 
 namespace Callvote
 {
@@ -14,10 +15,10 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.0.0.9",
+		version = "1.1.0.10",
 		SmodMajor = 3,
-		SmodMinor = 2,
-		SmodRevision = 2
+		SmodMinor = 4,
+		SmodRevision = 0
 		)]
 	class CallvotePlugin : Plugin
 	{
@@ -62,6 +63,8 @@ namespace Callvote
 			// Register Command(s)
 			this.AddCommand("callvote", new CallvoteCommand(this));
 			this.AddCommand("stopvote", new StopvoteCommand(this));
+			this.AddCommand("yes", new Vote1Command(this));
+			this.AddCommand("no", new Vote2Command(this));
 			this.AddCommand("1", new Vote1Command(this));
 			this.AddCommand("2", new Vote2Command(this));
 			this.AddCommand("3", new Vote3Command(this));
@@ -73,12 +76,12 @@ namespace Callvote
 			this.AddCommand("9", new Vote9Command(this));
 			this.AddCommand("0", new Vote0Command(this));
 			// Register config setting(s)
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, Smod2.Config.SettingType.LIST, true, "List of role allowed "));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, Smod2.Config.SettingType.NUMERIC, true, ""));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, Smod2.Config.SettingType.BOOL, true, "Enable callvote Kick."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, Smod2.Config.SettingType.BOOL, true, "Enable callvote RestartRound."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, Smod2.Config.SettingType.NUMERIC, true, "The percentage needed to kick a user."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, Smod2.Config.SettingType.NUMERIC, true, "The percentage needed to restart a round."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, true, "List of role allowed "));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, true, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, true, "Enable callvote Kick."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, true, "Enable callvote RestartRound."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, true, "The percentage needed to kick a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, true, "The percentage needed to restart a round."));
 		}
 
 		public bool canCallVotes(Player player)
@@ -115,24 +118,90 @@ namespace Callvote
 				}
 				else
 				{
+					Dictionary<int, string> options = new Dictionary<int, string>();
 					switch (args[0])
 					{
 						case "RestartRound":
-							this.Info("Vote called by " + player.Name + " to " + args[1]);
-							//return new string[] { "To be implemented." };
-							return "To be implemented.";
-
-						case "Kick":
-							if (args.Length == 1)
+							if (enableRestartRound)
 							{
-								//return new string[] { "callvote Kick <player>" };
-								return "callvote Kick <player>";
+								this.Info("Vote called by " + player.Name + " to " + args[1]);
+								//return new string[] { "To be implemented." };
+
+								options[1] = "Yes";
+								options[2] = "No";
+
+								currentVote = new Vote("Restart the round?", options);
+								currentVote.response = delegate(Vote vote)
+								{
+									int votePercent = (vote.counter[1] / this.Server.MaxPlayers) * 100;
+									if (vote.counter.ContainsKey(1) && (vote.counter[1] / this.Server.MaxPlayers) * 100 >= this.thresholdRestartRound)
+									{
+										this.Server.Map.Broadcast(5, votePercent + " voted yes. Restarting the round...", false);
+										this.Server.Round.RestartRound();
+									}
+									else
+									{
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required.", false);
+									}
+								};
+								break;
 							}
 							else
 							{
-								this.Info("Vote called by " + player.Name + " to " + args[1] + " player " + args[2]);
-								//return new string[] { "To be implemented." };
-								return "To be implemented.";
+								return "callvote RestartRound is not enabled.";
+							}
+							
+
+						case "Kick":
+							if (this.enableKick)
+							{
+								if (args.Length == 1)
+								{
+									return "callvote Kick <player>";
+								}
+								else
+								{
+									this.Info("Vote called by " + player.Name + " to " + args[1] + " player " + args[2]);
+
+									List<Player> playerSearch = this.Server.GetPlayers().Where(p => p.Name.Contains(args[1])).ToList();
+									if (playerSearch.Count() > 1)
+									{
+										return "Multiple players a name or partial name of " + args[1] + ". Please use a different search string.";
+									}
+									else if (playerSearch.Count() == 1)
+									{
+										Player locatedPlayer = playerSearch[0];
+
+										options[1] = "Yes";
+										options[2] = "No";
+
+										currentVote = new Vote("Should the player " + locatedPlayer.Name + " be kicked?", options);
+
+										currentVote.response = delegate(Vote vote)
+										{
+											int votePercent = (vote.counter[1] / this.Server.MaxPlayers) * 100;
+											if (vote.counter.ContainsKey(1) && (vote.counter[1] / this.Server.MaxPlayers) * 100 >= this.thresholdKick)
+											{
+												this.Server.Map.Broadcast(5, votePercent + " voted yes. Kicking player " + locatedPlayer.Name + ".", false);
+												locatedPlayer.Ban(0);
+											}
+											else
+											{
+												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdKick + "% was required to kick " + locatedPlayer.Name + ".", false);
+											}
+										};
+
+										break;
+									}
+									else
+									{
+										return "Did not find any players with the name or partial name of " + args[1];
+									}
+								}
+							}
+							else
+							{
+								return "callvote Kick is not enabled.";
 							}
 
 						default:
@@ -141,8 +210,7 @@ namespace Callvote
 							{
 								return "You cannot call votes.";
 							}
-
-							Dictionary<int, string> options = new Dictionary<int, string>();
+							
 							if (args.Length == 1)
 							{
 								this.Info("Binary vote called by " + player.Name + ": " + string.Join(" ", args));
@@ -157,64 +225,67 @@ namespace Callvote
 									options[i] = args[i];
 								}
 							}
-
 							currentVote = new Vote(args[0], options);
-							string firstBroadcast = currentVote.question + " Press ~ and type ";
-							int counter = 0;
+							break;
+					}
+
+					string firstBroadcast = currentVote.question + " Press ~ and type ";
+					int counter = 0;
+					foreach (KeyValuePair<int, string> kv in currentVote.options)
+					{
+						if (counter == currentVote.options.Count - 1)
+						{
+							firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
+						}
+						else
+						{
+							firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
+						}
+						counter++;
+					}
+					this.Server.Map.Broadcast(5, firstBroadcast, false);
+
+					int timerCounter = 0;
+					currentVote.timer = new Timer
+					{
+						Interval = 5000,
+						Enabled = true,
+						AutoReset = true
+					};
+					currentVote.timer.Elapsed += delegate
+					{
+						if (currentVote.timer.Interval == 5000)
+						{
+							currentVote.timer.Interval = 1000;
+						}
+
+						if (timerCounter >= this.voteDuration + 1)
+						{
+							string timerBroadcast = "Final results:\n";
 							foreach (KeyValuePair<int, string> kv in currentVote.options)
 							{
-								if (counter == currentVote.options.Count - 1)
-								{
-									firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
-								}
-								else
-								{
-									firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
-								}
-								counter++;
+								timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
 							}
-							this.Server.Map.Broadcast(5, firstBroadcast, false);
+							this.Server.Map.Broadcast(5, timerBroadcast, false);
 
-							int timerCounter = 0;
-							currentVote.timer = new Timer
+							currentVote.response?.Invoke(currentVote);
+
+							currentVote.timer.Enabled = false;
+							currentVote = null;
+						}
+						else
+						{
+							string timerBroadcast = firstBroadcast + "\n";
+							foreach (KeyValuePair<int, string> kv in currentVote.options)
 							{
-								Interval = 5000,
-								Enabled = true,
-								AutoReset = true
-							};
-							currentVote.timer.Elapsed += delegate
-							{
-								if (currentVote.timer.Interval == 5000)
-								{
-									currentVote.timer.Interval = 1000;
-								}
-
-								if (timerCounter >= this.voteDuration + 1)
-								{
-									string timerBroadcast = "Final results:\n";
-									foreach (KeyValuePair<int, string> kv in currentVote.options)
-									{
-										timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
-									}
-									this.Server.Map.Broadcast(5, timerBroadcast, false);
-
-									currentVote.timer.Enabled = false;
-									currentVote = null;
-								}
-								else
-								{
-									string timerBroadcast = firstBroadcast + "\n";
-									foreach (KeyValuePair<int, string> kv in currentVote.options)
-									{
-										timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
-									}
-									this.Server.Map.Broadcast(1, timerBroadcast, false);
-								}
-								timerCounter++;
-							};
-							//return new string[] { "Vote has been started!" };
-							return "Vote has been started!";
-					}
+								timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
+							}
+							this.Server.Map.Broadcast(1, timerBroadcast, false);
+						}
+						timerCounter++;
+					};
+					//return new string[] { "Vote has been started!" };
+					return "Vote has been started!";
 				}
 			}
 		}
@@ -276,6 +347,8 @@ namespace Callvote
 		}
 	}
 
+	delegate void CallvoteFunction(Vote vote);
+
 	class Vote
 	{
 		public string question;
@@ -283,6 +356,7 @@ namespace Callvote
 		public HashSet<string> votes = new HashSet<string>();
 		public Dictionary<int, int> counter = new Dictionary<int, int>();
 		public Timer timer;
+		public CallvoteFunction response;
 
 		public Vote(string question, Dictionary<int, string> options)
 		{
