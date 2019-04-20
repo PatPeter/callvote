@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.15",
+		version = "1.1.0.16",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -132,18 +132,18 @@ namespace Callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								currentVote = new Vote("Restart the round?", options);
+								currentVote = new Vote(player.Name + " asks: Restart the round?", options);
 								currentVote.response = delegate(Vote vote)
 								{
 									int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 									if (votePercent >= this.thresholdRestartRound)
 									{
-										this.Server.Map.Broadcast(5, votePercent + " voted yes. Restarting the round...", false);
+										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...", false);
 										this.Server.Round.RestartRound();
 									}
 									else
 									{
-										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required.", false);
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required to restart the round.", false);
 									}
 								};
 								break;
@@ -177,14 +177,14 @@ namespace Callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										currentVote = new Vote("Should the player " + locatedPlayer.Name + " be kicked?", options);
+										currentVote = new Vote(player.Name + " asks: Kick " + locatedPlayer.Name + "?", options);
 
 										currentVote.response = delegate(Vote vote)
 										{
 											int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 											if (votePercent >= this.thresholdKick)
 											{
-												this.Server.Map.Broadcast(5, votePercent + " voted yes. Kicking player " + locatedPlayer.Name + ".", false);
+												this.Server.Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayer.Name + ".", false);
 												locatedPlayer.Ban(0);
 											}
 											else
@@ -227,7 +227,7 @@ namespace Callvote
 									options[i] = args[i];
 								}
 							}
-							currentVote = new Vote(args[0], options);
+							currentVote = new Vote(player.Name + " asks: " + args[0], options);
 							break;
 					}
 
