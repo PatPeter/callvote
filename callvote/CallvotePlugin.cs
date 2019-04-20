@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.18",
+		version = "1.1.0.19",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -226,7 +226,7 @@ namespace Callvote
 							//voteInProgress = true;
 							if (!canCallVotes(player))
 							{
-								return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" + player.GetRankName() : "default") + ", is not allowed to call votes.";
+								return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" : "\"" + player.GetRankName() + "\"") + ", is not allowed to call votes.";
 							}
 							
 							if (args.Length == 1)
@@ -317,7 +317,7 @@ namespace Callvote
 		{
 			if (!canCallVotes(player))
 			{
-				return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" + player.GetRankName() : "default") + ", is not allowed to stop votes.";
+				return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" : "\"" + player.GetRankName() + "\"") + ", is not allowed to stop votes.";
 			}
 
 			if (this.currentVote != null)
