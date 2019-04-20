@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.16",
+		version = "1.1.0.17",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -90,7 +90,7 @@ namespace Callvote
 		{
 			foreach (string role in allowedRoles)
 			{
-				if (String.Equals(role, player.GetUserGroup().Name, StringComparison.CurrentCultureIgnoreCase) || String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
+				if ((player.GetUserGroup() != null && String.Equals(role, player.GetUserGroup().Name, StringComparison.CurrentCultureIgnoreCase)) || String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
 				{
 					return true;
 				}
@@ -309,14 +309,9 @@ namespace Callvote
 				if (this.currentVote.timer != null)
 				{
 					this.currentVote.timer.Stop();
-					this.currentVote = null;
-					return "Vote stopped.";
 				}
-				else
-				{
-					this.currentVote = null;
-					return "Vote stopped.";
-				}
+				this.currentVote = null;
+				return "Vote stopped.";
 			}
 			else
 			{
