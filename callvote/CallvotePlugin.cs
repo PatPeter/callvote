@@ -15,7 +15,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.10",
+		version = "1.1.0.11",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -76,12 +76,12 @@ namespace Callvote
 			this.AddCommand("9", new Vote9Command(this));
 			this.AddCommand("0", new Vote0Command(this));
 			// Register config setting(s)
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, true, "List of role allowed "));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, true, ""));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, true, "Enable callvote Kick."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, true, "Enable callvote RestartRound."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, true, "The percentage needed to kick a user."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, true, "The percentage needed to restart a round."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, false, false, "List of role allowed "));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, false, false, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, false, false, "Enable callvote Kick."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, false, false, "Enable callvote RestartRound."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, false, false, "The percentage needed to kick a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, false, false, "The percentage needed to restart a round."));
 		}
 
 		public bool canCallVotes(Player player)
