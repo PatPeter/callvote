@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.17",
+		version = "1.1.0.18",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -78,8 +78,8 @@ namespace Callvote
 			this.AddCommand("9", new Vote9Command(this));
 			this.AddCommand("0", new Vote0Command(this));
 			// Register config setting(s)
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, SettingType.LIST, true, "List of role allowed "));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, SettingType.NUMERIC, true, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, SettingType.LIST, true, "List of role allowed to call custom votes."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, SettingType.NUMERIC, true, "Number of seconds for a vote to last for."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, SettingType.BOOL, true, "Enable callvote Kick."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, SettingType.BOOL, true, "Enable callvote RestartRound."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, SettingType.NUMERIC, true, "The percentage needed to kick a user."));
@@ -88,9 +88,25 @@ namespace Callvote
 
 		public bool canCallVotes(Player player)
 		{
+			if (player == null)
+			{
+				return false;
+			}
+
 			foreach (string role in allowedRoles)
 			{
-				if ((player.GetUserGroup() != null && String.Equals(role, player.GetUserGroup().Name, StringComparison.CurrentCultureIgnoreCase)) || String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
+				if (player.GetUserGroup() != null)
+				{
+					if (String.Equals(role, player.GetUserGroup().Name, StringComparison.CurrentCultureIgnoreCase))
+					{
+						return true;
+					}
+					else if (String.Equals(role, player.GetUserGroup().BadgeText, StringComparison.CurrentCultureIgnoreCase))
+					{
+						return true;
+					}
+				}
+				if (String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
 				{
 					return true;
 				}
@@ -210,7 +226,7 @@ namespace Callvote
 							//voteInProgress = true;
 							if (!canCallVotes(player))
 							{
-								return "You cannot call votes.";
+								return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" + player.GetRankName() : "default") + ", is not allowed to call votes.";
 							}
 							
 							if (args.Length == 1)
@@ -301,7 +317,7 @@ namespace Callvote
 		{
 			if (!canCallVotes(player))
 			{
-				return "You cannot stop votes.";
+				return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" + player.GetRankName() : "default") + ", is not allowed to stop votes.";
 			}
 
 			if (this.currentVote != null)
