@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.13",
+		version = "1.1.0.14",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -135,8 +135,8 @@ namespace Callvote
 								currentVote = new Vote("Restart the round?", options);
 								currentVote.response = delegate(Vote vote)
 								{
-									int votePercent = (vote.counter[1] / this.Server.MaxPlayers) * 100;
-									if (vote.counter.ContainsKey(1) && (vote.counter[1] / this.Server.MaxPlayers) * 100 >= this.thresholdRestartRound)
+									int votePercent = (int) ((float)vote.counter[1] / (float)this.Server.NumPlayers * 100f);
+									if (votePercent >= this.thresholdRestartRound)
 									{
 										this.Server.Map.Broadcast(5, votePercent + " voted yes. Restarting the round...", false);
 										this.Server.Round.RestartRound();
@@ -168,7 +168,7 @@ namespace Callvote
 									List<Player> playerSearch = this.Server.GetPlayers().Where(p => p.Name.Contains(args[1])).ToList();
 									if (playerSearch.Count() > 1)
 									{
-										return "Multiple players a name or partial name of " + args[1] + ". Please use a different search string.";
+										return "Multiple players have a name or partial name of " + args[1] + ". Please use a different search string.";
 									}
 									else if (playerSearch.Count() == 1)
 									{
@@ -181,8 +181,8 @@ namespace Callvote
 
 										currentVote.response = delegate(Vote vote)
 										{
-											int votePercent = (vote.counter[1] / this.Server.MaxPlayers) * 100;
-											if (vote.counter.ContainsKey(1) && (vote.counter[1] / this.Server.MaxPlayers) * 100 >= this.thresholdKick)
+											int votePercent = (int) ((float)vote.counter[1] / (float)this.Server.NumPlayers * 100f);
+											if (votePercent >= this.thresholdKick)
 											{
 												this.Server.Map.Broadcast(5, votePercent + " voted yes. Kicking player " + locatedPlayer.Name + ".", false);
 												locatedPlayer.Ban(0);
@@ -263,14 +263,19 @@ namespace Callvote
 
 						if (timerCounter >= this.voteDuration + 1)
 						{
-							string timerBroadcast = "Final results:\n";
-							foreach (KeyValuePair<int, string> kv in currentVote.options)
+							if (currentVote.response == null)
 							{
-								timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
+								string timerBroadcast = "Final results:\n";
+								foreach (KeyValuePair<int, string> kv in currentVote.options)
+								{
+									timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
+								}
+								this.Server.Map.Broadcast(5, timerBroadcast, false);
 							}
-							this.Server.Map.Broadcast(5, timerBroadcast, false);
-
-							currentVote.response?.Invoke(currentVote);
+							else
+							{
+								currentVote.response.Invoke(currentVote);
+							}
 
 							currentVote.timer.Enabled = false;
 							currentVote = null;
