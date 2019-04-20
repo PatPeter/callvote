@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.14",
+		version = "1.1.0.15",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -135,7 +135,7 @@ namespace Callvote
 								currentVote = new Vote("Restart the round?", options);
 								currentVote.response = delegate(Vote vote)
 								{
-									int votePercent = (int) ((float)vote.counter[1] / (float)this.Server.NumPlayers * 100f);
+									int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 									if (votePercent >= this.thresholdRestartRound)
 									{
 										this.Server.Map.Broadcast(5, votePercent + " voted yes. Restarting the round...", false);
@@ -181,7 +181,7 @@ namespace Callvote
 
 										currentVote.response = delegate(Vote vote)
 										{
-											int votePercent = (int) ((float)vote.counter[1] / (float)this.Server.NumPlayers * 100f);
+											int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 											if (votePercent >= this.thresholdKick)
 											{
 												this.Server.Map.Broadcast(5, votePercent + " voted yes. Kicking player " + locatedPlayer.Name + ".", false);
