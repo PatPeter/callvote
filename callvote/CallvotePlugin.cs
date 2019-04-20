@@ -16,7 +16,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.12",
+		version = "1.1.0.13",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -126,7 +126,7 @@ namespace Callvote
 						case "RestartRound":
 							if (enableRestartRound)
 							{
-								this.Info("Vote called by " + player.Name + " to " + args[1]);
+								this.Info("Vote called by " + player.Name + " to " + args[0]);
 								//return new string[] { "To be implemented." };
 
 								options[1] = "Yes";
@@ -163,7 +163,7 @@ namespace Callvote
 								}
 								else
 								{
-									this.Info("Vote called by " + player.Name + " to " + args[1] + " player " + args[2]);
+									this.Info("Vote called by " + player.Name + " to " + args[0] + " player " + args[1]);
 
 									List<Player> playerSearch = this.Server.GetPlayers().Where(p => p.Name.Contains(args[1])).ToList();
 									if (playerSearch.Count() > 1)
