@@ -41,7 +41,7 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.1.0.19",
+		version = "1.2.0.20",
 		// 3.4.0 is not compatible with SettingType
 		SmodMajor = 3,
 		SmodMinor = 3,
@@ -54,9 +54,17 @@ namespace Callvote
 
 		public string[] allowedRoles = { "owner", "admin", "moderator" };
 		public int voteDuration = 30;
+
 		public bool enableKick = false;
+		public bool enableKill = false;
+		public bool enableNuke = false;
+		public bool enableRespawnWave = false;
 		public bool enableRestartRound = false;
+
 		public int thresholdKick = 80;
+		public int thresholdKill = 80;
+		public int thresholdNuke = 80;
+		public int thresholdRespawnWave = 80;
 		public int thresholdRestartRound = 80;
 
 		public override void OnDisable()
@@ -73,9 +81,17 @@ namespace Callvote
 		{
 			allowedRoles = this.GetConfigList("callvote_allowed_roles");
 			voteDuration = this.GetConfigInt("callvote_vote_duration");
+
 			enableKick = this.GetConfigBool("callvote_enable_kick");
+			enableKill = this.GetConfigBool("callvote_enable_kill");
+			enableNuke = this.GetConfigBool("callvote_enable_nuke");
+			enableRespawnWave = this.GetConfigBool("callvote_enable_respawnwave");
 			enableRestartRound = this.GetConfigBool("callvote_enable_restartround");
+
 			thresholdKick = this.GetConfigInt("callvote_threshold_kick");
+			thresholdKill = this.GetConfigInt("callvote_threshold_kill");
+			thresholdNuke = this.GetConfigInt("callvote_threshold_nuke");
+			thresholdRespawnWave = this.GetConfigInt("callvote_threshold_respawnwave");
 			thresholdRestartRound = this.GetConfigInt("callvote_threshold_restartround");
 		}
 
@@ -105,9 +121,17 @@ namespace Callvote
 			// Register config setting(s)
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, SettingType.LIST, true, "List of role allowed to call custom votes."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, SettingType.NUMERIC, true, "Number of seconds for a vote to last for."));
+
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, SettingType.BOOL, true, "Enable callvote Kick."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kill", false, SettingType.BOOL, true, "Enable callvote Kill."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_nuke", false, SettingType.BOOL, true, "Enable callvote Nuke."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_respawnwave", false, SettingType.BOOL, true, "Enable callvote RespawnWave."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, SettingType.BOOL, true, "Enable callvote RestartRound."));
+
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, SettingType.NUMERIC, true, "The percentage needed to kick a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kill", 80, SettingType.NUMERIC, true, "The percentage needed to kill a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_nuke", 80, SettingType.NUMERIC, true, "The percentage needed to nuke the facility."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_respawnwave", 80, SettingType.NUMERIC, true, "The percentage needed to respawn a wave."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, SettingType.NUMERIC, true, "The percentage needed to restart a round."));
 		}
 
@@ -162,40 +186,9 @@ namespace Callvote
 				else
 				{
 					Dictionary<int, string> options = new Dictionary<int, string>();
-					switch (args[0])
+					switch (args[0].ToLower())
 					{
-						case "RestartRound":
-							if (enableRestartRound)
-							{
-								this.Info("Vote called by " + player.Name + " to " + args[0]);
-								//return new string[] { "To be implemented." };
-
-								options[1] = "Yes";
-								options[2] = "No";
-
-								currentVote = new Vote(player.Name + " asks: Restart the round?", options);
-								currentVote.response = delegate(Vote vote)
-								{
-									int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-									if (votePercent >= this.thresholdRestartRound)
-									{
-										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...", false);
-										this.Server.Round.RestartRound();
-									}
-									else
-									{
-										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required to restart the round.", false);
-									}
-								};
-								break;
-							}
-							else
-							{
-								return "callvote RestartRound is not enabled.";
-							}
-							
-
-						case "Kick":
+						case "kick":
 							if (this.enableKick)
 							{
 								if (args.Length == 1)
@@ -245,6 +238,157 @@ namespace Callvote
 							else
 							{
 								return "callvote Kick is not enabled.";
+							}
+						
+						case "kill":
+							if (this.enableKill)
+							{
+								if (args.Length == 1)
+								{
+									return "callvote Kill <player>";
+								}
+								else
+								{
+									this.Info("Vote called by " + player.Name + " to " + args[0] + " player " + args[1]);
+
+									List<Player> playerSearch = this.Server.GetPlayers().Where(p => p.Name.Contains(args[1])).ToList();
+									if (playerSearch.Count() > 1)
+									{
+										return "Multiple players have a name or partial name of " + args[1] + ". Please use a different search string.";
+									}
+									else if (playerSearch.Count() == 1)
+									{
+										Player locatedPlayer = playerSearch[0];
+
+										options[1] = "Yes";
+										options[2] = "No";
+
+										currentVote = new Vote(player.Name + " asks: Kill " + locatedPlayer.Name + "?", options);
+
+										currentVote.response = delegate (Vote vote)
+										{
+											int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+											if (votePercent >= this.thresholdKill)
+											{
+												this.Server.Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayer.Name + ".", false);
+												locatedPlayer.Kill();
+											}
+											else
+											{
+												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdKill + "% was required to kill " + locatedPlayer.Name + ".", false);
+											}
+										};
+
+										break;
+									}
+									else
+									{
+										return "Did not find any players with the name or partial name of " + args[1];
+									}
+								}
+							}
+							else
+							{
+								return "callvote Kill is not enabled.";
+							}
+
+							
+						case "nuke":
+							if (enableNuke)
+							{
+								this.Info("Vote called by " + player.Name + " to " + args[0]);
+								//return new string[] { "To be implemented." };
+
+								options[1] = "Yes";
+								options[2] = "No";
+
+								currentVote = new Vote(player.Name + " asks: NUKE THE FACILITY?!?", options);
+								currentVote.response = delegate (Vote vote)
+								{
+									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (votePercent >= this.thresholdNuke)
+									{
+										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Nuking the facility...", false);
+										this.Server.Map.DetonateWarhead();
+									}
+									else
+									{
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdNuke + "% was required to nuke the facility.", false);
+									}
+								};
+								break;
+							}
+							else
+							{
+								return "callvote Nuke is not enabled.";
+							}
+
+						case "respawnwave":
+							if (enableRespawnWave)
+							{
+								this.Info("Vote called by " + player.Name + " to " + args[0]);
+								//return new string[] { "To be implemented." };
+
+								options[1] = "No";
+								options[2] = "MTF";
+								options[3] = "CI";
+
+								currentVote = new Vote(player.Name + " asks: Respawn the next wave?", options);
+								currentVote.response = delegate (Vote vote)
+								{
+									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									int mtfVotePercent = (int)((float)vote.counter[2] / (float)(this.Server.NumPlayers - 1) * 100f);
+									int ciVotePercent = (int)((float)vote.counter[3] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (mtfVotePercent >= this.thresholdRespawnWave)
+									{
+										this.Server.Map.Broadcast(5, mtfVotePercent + "% voted yes. Respawning a wave of Nine-Tailed Fox...", false);
+										this.Server.Round.MTFRespawn(false);
+									}
+									else if (ciVotePercent >= this.thresholdRespawnWave)
+									{
+										this.Server.Map.Broadcast(5, ciVotePercent + "% voted yes. Respawning a wave of Chaos Insurgency...", false);
+										this.Server.Round.MTFRespawn(true);
+									}
+									else
+									{
+										this.Server.Map.Broadcast(5, votePercent + "% voted no. " + this.thresholdRespawnWave + "% was required to respawn the next wave.", false);
+									}
+								};
+								break;
+							}
+							else
+							{
+								return "callvote RespawnWave is not enabled.";
+							}
+
+						case "restartround":
+							if (enableRestartRound)
+							{
+								this.Info("Vote called by " + player.Name + " to " + args[0]);
+								//return new string[] { "To be implemented." };
+
+								options[1] = "Yes";
+								options[2] = "No";
+
+								currentVote = new Vote(player.Name + " asks: Restart the round?", options);
+								currentVote.response = delegate (Vote vote)
+								{
+									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (votePercent >= this.thresholdRestartRound)
+									{
+										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...", false);
+										this.Server.Round.RestartRound();
+									}
+									else
+									{
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required to restart the round.", false);
+									}
+								};
+								break;
+							}
+							else
+							{
+								return "callvote RestartRound is not enabled.";
 							}
 
 						default:
