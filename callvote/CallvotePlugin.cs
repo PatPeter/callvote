@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
+using Smod2.Piping;
 
 namespace Callvote
 {
@@ -41,31 +42,32 @@ namespace Callvote
 		name = "callvote",
 		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
 		id = "patpeter.callvote",
-		version = "1.2.0.20",
-		// 3.4.0 is not compatible with SettingType
+		configPrefix = "cv",
+		langFile = "callvote",
+		version = "2.0.0.21",
 		SmodMajor = 3,
-		SmodMinor = 3,
+		SmodMinor = 4,
 		SmodRevision = 0
 		)]
 	class CallvotePlugin : Plugin
 	{
 		//bool voteInProgress = false;
-		public Vote currentVote = null;
+		internal Vote CurrentVote = null;
 
-		public string[] allowedRoles = { "owner", "admin", "moderator" };
-		public int voteDuration = 30;
+		internal string[] AllowedRoles = { "owner", "admin", "moderator" };
+		internal int VoteDuration = 30;
 
-		public bool enableKick = false;
-		public bool enableKill = false;
-		public bool enableNuke = false;
-		public bool enableRespawnWave = false;
-		public bool enableRestartRound = false;
+		internal bool EnableKick = false;
+		internal bool EnableKill = false;
+		internal bool EnableNuke = false;
+		internal bool EnableRespawnWave = false;
+		internal bool EnableRestartRound = false;
 
-		public int thresholdKick = 80;
-		public int thresholdKill = 80;
-		public int thresholdNuke = 80;
-		public int thresholdRespawnWave = 80;
-		public int thresholdRestartRound = 80;
+		internal int ThresholdKick = 80;
+		internal int ThresholdKill = 80;
+		internal int ThresholdNuke = 80;
+		internal int ThresholdRespawnWave = 80;
+		internal int ThresholdRestartRound = 80;
 
 		public override void OnDisable()
 		{
@@ -79,20 +81,20 @@ namespace Callvote
 
 		public void ReloadConfig()
 		{
-			allowedRoles = this.GetConfigList("callvote_allowed_roles");
-			voteDuration = this.GetConfigInt("callvote_vote_duration");
+			AllowedRoles = this.GetConfigList("callvote_allowed_roles");
+			VoteDuration = this.GetConfigInt("callvote_vote_duration");
 
-			enableKick = this.GetConfigBool("callvote_enable_kick");
-			enableKill = this.GetConfigBool("callvote_enable_kill");
-			enableNuke = this.GetConfigBool("callvote_enable_nuke");
-			enableRespawnWave = this.GetConfigBool("callvote_enable_respawnwave");
-			enableRestartRound = this.GetConfigBool("callvote_enable_restartround");
+			EnableKick = this.GetConfigBool("callvote_enable_kick");
+			EnableKill = this.GetConfigBool("callvote_enable_kill");
+			EnableNuke = this.GetConfigBool("callvote_enable_nuke");
+			EnableRespawnWave = this.GetConfigBool("callvote_enable_respawnwave");
+			EnableRestartRound = this.GetConfigBool("callvote_enable_restartround");
 
-			thresholdKick = this.GetConfigInt("callvote_threshold_kick");
-			thresholdKill = this.GetConfigInt("callvote_threshold_kill");
-			thresholdNuke = this.GetConfigInt("callvote_threshold_nuke");
-			thresholdRespawnWave = this.GetConfigInt("callvote_threshold_respawnwave");
-			thresholdRestartRound = this.GetConfigInt("callvote_threshold_restartround");
+			ThresholdKick = this.GetConfigInt("callvote_threshold_kick");
+			ThresholdKill = this.GetConfigInt("callvote_threshold_kill");
+			ThresholdNuke = this.GetConfigInt("callvote_threshold_nuke");
+			ThresholdRespawnWave = this.GetConfigInt("callvote_threshold_respawnwave");
+			ThresholdRestartRound = this.GetConfigInt("callvote_threshold_restartround");
 		}
 
 		public override void Register()
@@ -119,30 +121,31 @@ namespace Callvote
 			this.AddCommand("9", new Vote9Command(this));
 			this.AddCommand("0", new Vote0Command(this));
 			// Register config setting(s)
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, SettingType.LIST, true, "List of role allowed to call custom votes."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, SettingType.NUMERIC, true, "Number of seconds for a vote to last for."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, true, "List of role allowed to call custom votes."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, true, "Number of seconds for a vote to last for."));
 
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, SettingType.BOOL, true, "Enable callvote Kick."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kill", false, SettingType.BOOL, true, "Enable callvote Kill."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_nuke", false, SettingType.BOOL, true, "Enable callvote Nuke."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_respawnwave", false, SettingType.BOOL, true, "Enable callvote RespawnWave."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, SettingType.BOOL, true, "Enable callvote RestartRound."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, true, "Enable callvote Kick."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kill", false, true, "Enable callvote Kill."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_nuke", false, true, "Enable callvote Nuke."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_respawnwave", false, true, "Enable callvote RespawnWave."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_restartround", false, true, "Enable callvote RestartRound."));
 
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, SettingType.NUMERIC, true, "The percentage needed to kick a user."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kill", 80, SettingType.NUMERIC, true, "The percentage needed to kill a user."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_nuke", 80, SettingType.NUMERIC, true, "The percentage needed to nuke the facility."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_respawnwave", 80, SettingType.NUMERIC, true, "The percentage needed to respawn a wave."));
-			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, SettingType.NUMERIC, true, "The percentage needed to restart a round."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kick", 80, true, "The percentage needed to kick a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_kill", 80, true, "The percentage needed to kill a user."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_nuke", 80, true, "The percentage needed to nuke the facility."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_respawnwave", 80, true, "The percentage needed to respawn a wave."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_threshold_restartround", 80, true, "The percentage needed to restart a round."));
 		}
 
-		public bool canCallVotes(Player player)
+		[PipeMethod]
+		public bool CanCallVotes(Player player)
 		{
 			if (player == null)
 			{
 				return false;
 			}
 
-			foreach (string role in allowedRoles)
+			foreach (string role in AllowedRoles)
 			{
 				if (player.GetUserGroup() != null)
 				{
@@ -163,9 +166,8 @@ namespace Callvote
 			return false;
 		}
 
-		public string startVote(Player player, string[] args)
+		public string callvoteHandler(Player player, string[] args)
 		{
-
 			this.Info(player.Name + " called vote with arguments: ");
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -174,11 +176,11 @@ namespace Callvote
 			if (args.Length == 0)
 			{
 				//return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
-				return "callvote RestartRound/Kick/<custom> <player>/[options]";
+				return "callvote Kick/Kill/<custom> <player>/[options]";
 			}
 			else
 			{
-				if (currentVote != null)
+				if (CurrentVote != null)
 				{
 					//return new string[] { "A vote is currently in progress." };
 					return "A vote is currently in progress.";
@@ -189,7 +191,7 @@ namespace Callvote
 					switch (args[0].ToLower())
 					{
 						case "kick":
-							if (this.enableKick)
+							if (this.EnableKick)
 							{
 								if (args.Length == 1)
 								{
@@ -211,19 +213,19 @@ namespace Callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										currentVote = new Vote(player.Name + " asks: Kick " + locatedPlayer.Name + "?", options);
+										CurrentVote = new Vote(player.Name + " asks: Kick " + locatedPlayer.Name + "?", options);
 
-										currentVote.response = delegate(Vote vote)
+										CurrentVote.Callback = delegate(Vote vote)
 										{
-											int votePercent = (int) ((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-											if (votePercent >= this.thresholdKick)
+											int votePercent = (int) ((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+											if (votePercent >= this.ThresholdKick)
 											{
 												this.Server.Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayer.Name + ".", false);
 												locatedPlayer.Ban(0);
 											}
 											else
 											{
-												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdKick + "% was required to kick " + locatedPlayer.Name + ".", false);
+												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdKick + "% was required to kick " + locatedPlayer.Name + ".", false);
 											}
 										};
 
@@ -241,7 +243,7 @@ namespace Callvote
 							}
 						
 						case "kill":
-							if (this.enableKill)
+							if (this.EnableKill)
 							{
 								if (args.Length == 1)
 								{
@@ -263,19 +265,19 @@ namespace Callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										currentVote = new Vote(player.Name + " asks: Kill " + locatedPlayer.Name + "?", options);
+										CurrentVote = new Vote(player.Name + " asks: Kill " + locatedPlayer.Name + "?", options);
 
-										currentVote.response = delegate (Vote vote)
+										CurrentVote.Callback = delegate (Vote vote)
 										{
-											int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-											if (votePercent >= this.thresholdKill)
+											int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+											if (votePercent >= this.ThresholdKill)
 											{
 												this.Server.Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayer.Name + ".", false);
 												locatedPlayer.Kill();
 											}
 											else
 											{
-												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdKill + "% was required to kill " + locatedPlayer.Name + ".", false);
+												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdKill + "% was required to kill " + locatedPlayer.Name + ".", false);
 											}
 										};
 
@@ -294,7 +296,7 @@ namespace Callvote
 
 							
 						case "nuke":
-							if (enableNuke)
+							if (EnableNuke)
 							{
 								this.Info("Vote called by " + player.Name + " to " + args[0]);
 								//return new string[] { "To be implemented." };
@@ -302,18 +304,18 @@ namespace Callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								currentVote = new Vote(player.Name + " asks: NUKE THE FACILITY?!?", options);
-								currentVote.response = delegate (Vote vote)
+								CurrentVote = new Vote(player.Name + " asks: NUKE THE FACILITY?!?", options);
+								CurrentVote.Callback = delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-									if (votePercent >= this.thresholdNuke)
+									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (votePercent >= this.ThresholdNuke)
 									{
 										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Nuking the facility...", false);
 										this.Server.Map.DetonateWarhead();
 									}
 									else
 									{
-										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdNuke + "% was required to nuke the facility.", false);
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdNuke + "% was required to nuke the facility.", false);
 									}
 								};
 								break;
@@ -324,7 +326,7 @@ namespace Callvote
 							}
 
 						case "respawnwave":
-							if (enableRespawnWave)
+							if (EnableRespawnWave)
 							{
 								this.Info("Vote called by " + player.Name + " to " + args[0]);
 								//return new string[] { "To be implemented." };
@@ -333,27 +335,26 @@ namespace Callvote
 								options[2] = "MTF";
 								options[3] = "CI";
 
-								currentVote = new Vote(player.Name + " asks: Respawn the next wave?", options);
-								currentVote.response = delegate (Vote vote)
+								StartVote(player.Name + " asks: Respawn the next wave?", options, delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-									int mtfVotePercent = (int)((float)vote.counter[2] / (float)(this.Server.NumPlayers - 1) * 100f);
-									int ciVotePercent = (int)((float)vote.counter[3] / (float)(this.Server.NumPlayers - 1) * 100f);
-									if (mtfVotePercent >= this.thresholdRespawnWave)
+									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)(this.Server.NumPlayers - 1) * 100f);
+									int ciVotePercent = (int)((float)vote.Counter[3] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (mtfVotePercent >= this.ThresholdRespawnWave)
 									{
 										this.Server.Map.Broadcast(5, mtfVotePercent + "% voted yes. Respawning a wave of Nine-Tailed Fox...", false);
 										this.Server.Round.MTFRespawn(false);
 									}
-									else if (ciVotePercent >= this.thresholdRespawnWave)
+									else if (ciVotePercent >= this.ThresholdRespawnWave)
 									{
 										this.Server.Map.Broadcast(5, ciVotePercent + "% voted yes. Respawning a wave of Chaos Insurgency...", false);
 										this.Server.Round.MTFRespawn(true);
 									}
 									else
 									{
-										this.Server.Map.Broadcast(5, votePercent + "% voted no. " + this.thresholdRespawnWave + "% was required to respawn the next wave.", false);
+										this.Server.Map.Broadcast(5, votePercent + "% voted no. " + this.ThresholdRespawnWave + "% was required to respawn the next wave.", false);
 									}
-								};
+								});
 								break;
 							}
 							else
@@ -362,7 +363,7 @@ namespace Callvote
 							}
 
 						case "restartround":
-							if (enableRestartRound)
+							if (EnableRestartRound)
 							{
 								this.Info("Vote called by " + player.Name + " to " + args[0]);
 								//return new string[] { "To be implemented." };
@@ -370,20 +371,19 @@ namespace Callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								currentVote = new Vote(player.Name + " asks: Restart the round?", options);
-								currentVote.response = delegate (Vote vote)
+								StartVote(player.Name + " asks: Restart the round?", options, delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
-									if (votePercent >= this.thresholdRestartRound)
+									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
+									if (votePercent >= this.ThresholdRestartRound)
 									{
 										this.Server.Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...", false);
 										this.Server.Round.RestartRound();
 									}
 									else
 									{
-										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.thresholdRestartRound + "% was required to restart the round.", false);
+										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdRestartRound + "% was required to restart the round.", false);
 									}
-								};
+								});
 								break;
 							}
 							else
@@ -393,7 +393,7 @@ namespace Callvote
 
 						default:
 							//voteInProgress = true;
-							if (!canCallVotes(player))
+							if (!CanCallVotes(player))
 							{
 								return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" : "\"" + player.GetRankName() + "\"") + ", is not allowed to call votes.";
 							}
@@ -412,90 +412,110 @@ namespace Callvote
 									options[i] = args[i];
 								}
 							}
-							currentVote = new Vote(player.Name + " asks: " + args[0], options);
+							StartVote(player.Name + " asks: " + args[0], options, null);
 							break;
 					}
-
-					string firstBroadcast = currentVote.question + " Press ~ and type ";
-					int counter = 0;
-					foreach (KeyValuePair<int, string> kv in currentVote.options)
-					{
-						if (counter == currentVote.options.Count - 1)
-						{
-							firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
-						}
-						else
-						{
-							firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
-						}
-						counter++;
-					}
-					this.Server.Map.Broadcast(5, firstBroadcast, false);
-
-					int timerCounter = 0;
-					currentVote.timer = new Timer
-					{
-						Interval = 5000,
-						Enabled = true,
-						AutoReset = true
-					};
-					currentVote.timer.Elapsed += delegate
-					{
-						if (currentVote.timer.Interval == 5000)
-						{
-							currentVote.timer.Interval = 1000;
-						}
-
-						if (timerCounter >= this.voteDuration + 1)
-						{
-							if (currentVote.response == null)
-							{
-								string timerBroadcast = "Final results:\n";
-								foreach (KeyValuePair<int, string> kv in currentVote.options)
-								{
-									timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
-								}
-								this.Server.Map.Broadcast(5, timerBroadcast, false);
-							}
-							else
-							{
-								currentVote.response.Invoke(currentVote);
-							}
-
-							currentVote.timer.Enabled = false;
-							currentVote = null;
-						}
-						else
-						{
-							string timerBroadcast = firstBroadcast + "\n";
-							foreach (KeyValuePair<int, string> kv in currentVote.options)
-							{
-								timerBroadcast += currentVote.options[kv.Key] + " (" + currentVote.counter[kv.Key] + ") ";
-							}
-							this.Server.Map.Broadcast(1, timerBroadcast, false);
-						}
-						timerCounter++;
-					};
-					//return new string[] { "Vote has been started!" };
 					return "Vote has been started!";
 				}
 			}
 		}
 
-		public string stopVote(Player player)
+		[PipeMethod]
+		public bool Voting()
 		{
-			if (!canCallVotes(player))
+			if (CurrentVote != null)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		[PipeMethod]
+		public bool StartVote(string question, Dictionary<int, string> options, CallvoteFunction callback)
+		{
+			if (CurrentVote != null)
+			{
+				return false;
+			}
+
+			CurrentVote = new Vote(question, options);
+			CurrentVote.Callback = callback;
+			string firstBroadcast = CurrentVote.Question + " Press ~ and type ";
+			int counter = 0;
+			foreach (KeyValuePair<int, string> kv in CurrentVote.Options)
+			{
+				if (counter == CurrentVote.Options.Count - 1)
+				{
+					firstBroadcast += "or ." + kv.Key + " for " + kv.Value + " ";
+				}
+				else
+				{
+					firstBroadcast += "." + kv.Key + " for " + kv.Value + ", ";
+				}
+				counter++;
+			}
+			this.Server.Map.Broadcast(5, firstBroadcast, false);
+
+			int timerCounter = 0;
+			CurrentVote.Timer = new Timer
+			{
+				Interval = 5000,
+				Enabled = true,
+				AutoReset = true
+			};
+			CurrentVote.Timer.Elapsed += delegate
+			{
+				if (CurrentVote.Timer.Interval == 5000)
+				{
+					CurrentVote.Timer.Interval = 1000;
+				}
+
+				if (timerCounter >= this.VoteDuration + 1)
+				{
+					if (CurrentVote.Callback == null)
+					{
+						string timerBroadcast = "Final results:\n";
+						foreach (KeyValuePair<int, string> kv in CurrentVote.Options)
+						{
+							timerBroadcast += CurrentVote.Options[kv.Key] + " (" + CurrentVote.Counter[kv.Key] + ") ";
+						}
+						this.Server.Map.Broadcast(5, timerBroadcast, false);
+					}
+					else
+					{
+						CurrentVote.Callback.Invoke(CurrentVote);
+					}
+
+					CurrentVote.Timer.Enabled = false;
+					CurrentVote = null;
+				}
+				else
+				{
+					string timerBroadcast = firstBroadcast + "\n";
+					foreach (KeyValuePair<int, string> kv in CurrentVote.Options)
+					{
+						timerBroadcast += CurrentVote.Options[kv.Key] + " (" + CurrentVote.Counter[kv.Key] + ") ";
+					}
+					this.Server.Map.Broadcast(1, timerBroadcast, false);
+				}
+				timerCounter++;
+			};
+			//return new string[] { "Vote has been started!" };
+			return true;
+		}
+		
+		public string stopvoteHandler(Player player)
+		{
+			if (!CanCallVotes(player))
 			{
 				return "Your group, " + (player.GetUserGroup() != null ? player.GetUserGroup().Name + "/" + player.GetUserGroup().BadgeText + "/" : "\"" + player.GetRankName() + "\"") + ", is not allowed to stop votes.";
 			}
 
-			if (this.currentVote != null)
+			if (this.StopVote())
 			{
-				if (this.currentVote.timer != null)
-				{
-					this.currentVote.timer.Stop();
-				}
-				this.currentVote = null;
 				return "Vote stopped.";
 			}
 			else
@@ -504,17 +524,35 @@ namespace Callvote
 			}
 		}
 
-		public string handleVote(Player player, int option)
+		[PipeMethod]
+		public bool StopVote()
 		{
-			if (currentVote != null)
+			if (this.CurrentVote != null)
 			{
-				if (!currentVote.votes.Contains(player.SteamId))
+				if (this.CurrentVote.Timer != null)
 				{
-					if (currentVote.options.ContainsKey(option))
+					this.CurrentVote.Timer.Stop();
+				}
+				this.CurrentVote = null;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public string HandleVote(Player player, int option)
+		{
+			if (CurrentVote != null)
+			{
+				if (!CurrentVote.Votes.Contains(player.SteamId))
+				{
+					if (CurrentVote.Options.ContainsKey(option))
 					{
-						currentVote.counter[option]++;
-						currentVote.votes.Add(player.SteamId);
-						this.Info("Player " + player.Name + " voted " + currentVote.options[option] + " bringing the counter to " + currentVote.counter[option]);
+						CurrentVote.Counter[option]++;
+						CurrentVote.Votes.Add(player.SteamId);
+						this.Info("Player " + player.Name + " voted " + CurrentVote.Options[option] + " bringing the counter to " + CurrentVote.Counter[option]);
 						//return new string[] { "Vote accepted!" };
 						return "Vote accepted!";
 					} else
@@ -538,20 +576,20 @@ namespace Callvote
 
 	class Vote
 	{
-		public string question;
-		public Dictionary<int, string> options = new Dictionary<int, string>();
-		public HashSet<string> votes = new HashSet<string>();
-		public Dictionary<int, int> counter = new Dictionary<int, int>();
-		public Timer timer;
-		public CallvoteFunction response;
+		public string Question;
+		public Dictionary<int, string> Options = new Dictionary<int, string>();
+		public HashSet<string> Votes = new HashSet<string>();
+		public Dictionary<int, int> Counter = new Dictionary<int, int>();
+		public Timer Timer;
+		public CallvoteFunction Callback;
 
 		public Vote(string question, Dictionary<int, string> options)
 		{
-			this.question = question;
-			this.options = options;
+			this.Question = question;
+			this.Options = options;
 			foreach (int option in options.Keys)
 			{
-				counter[option] = 0;
+				Counter[option] = 0;
 			}
 		}
 	}

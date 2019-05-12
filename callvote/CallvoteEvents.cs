@@ -49,10 +49,10 @@ namespace Callvote
 			int option;
 			if (int.TryParse(command, out option))
 			{
-				if (this.plugin.currentVote != null)
+				if (this.plugin.Voting())
 				{
 
-					ev.ReturnMessage = this.plugin.handleVote(ev.Player, option);
+					ev.ReturnMessage = this.plugin.HandleVote(ev.Player, option);
 				}
 				else
 				{
@@ -71,19 +71,19 @@ namespace Callvote
 							.ToArray()
 							.Skip(1)
 							.ToArray();
-						ev.ReturnMessage = this.plugin.startVote(ev.Player, quotedArgs);
+						ev.ReturnMessage = this.plugin.callvoteHandler(ev.Player, quotedArgs);
 						break;
 
 					case "stopvote":
-						ev.ReturnMessage = this.plugin.stopVote(ev.Player);
+						ev.ReturnMessage = this.plugin.stopvoteHandler(ev.Player);
 						break;
 
 					case "yes":
-						ev.ReturnMessage = this.plugin.handleVote(ev.Player, 1);
+						ev.ReturnMessage = this.plugin.HandleVote(ev.Player, 1);
 						break;
 
 					case "no":
-						ev.ReturnMessage = this.plugin.handleVote(ev.Player, 2);
+						ev.ReturnMessage = this.plugin.HandleVote(ev.Player, 2);
 						break;
 				}
 			}
@@ -92,11 +92,12 @@ namespace Callvote
 		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
 		{
 			plugin.ReloadConfig();
-			if (this.plugin.currentVote != null && this.plugin.currentVote.timer != null)
+			if (this.plugin.CurrentVote != null && this.plugin.CurrentVote.Timer != null)
 			{
-				this.plugin.currentVote.timer.Stop();
+				this.plugin.CurrentVote.Timer.Stop();
+				this.plugin.CurrentVote.Timer.Dispose();
 			}
-			this.plugin.currentVote = null;
+			this.plugin.CurrentVote = null;
 		}
 	}
 }
