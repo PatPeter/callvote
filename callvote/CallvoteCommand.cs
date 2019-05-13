@@ -62,7 +62,7 @@ namespace Callvote
 				.Select(m => m.Value)
 				.ToArray();
 			//string[] quotedArgs = new string[quoteDelimitedArguments.Count - 1];
-			return new string[] { this.plugin.callvoteHandler(caller, quotedArgs) };
+			return new string[] { this.plugin.CallvoteHandler(caller, quotedArgs) };
 		}
 	}
 	class StopvoteCommand : ICommandHandler
@@ -92,7 +92,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.stopvoteHandler(caller) };
+			return new string[] { this.plugin.StopvoteHandler(caller) };
 		}
 	}
 
@@ -123,7 +123,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 1) };
+			return new string[] { this.plugin.VoteHandler(caller, 1) };
 		}
 	}
 
@@ -154,7 +154,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 2) };
+			return new string[] { this.plugin.VoteHandler(caller, 2) };
 		}
 	}
 
@@ -185,7 +185,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 3) };
+			return new string[] { this.plugin.VoteHandler(caller, 3) };
 		}
 	}
 
@@ -216,7 +216,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 4) };
+			return new string[] { this.plugin.VoteHandler(caller, 4) };
 		}
 	}
 
@@ -247,7 +247,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 5) };
+			return new string[] { this.plugin.VoteHandler(caller, 5) };
 		}
 	}
 
@@ -278,7 +278,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 6) };
+			return new string[] { this.plugin.VoteHandler(caller, 6) };
 		}
 	}
 
@@ -309,7 +309,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 7) };
+			return new string[] { this.plugin.VoteHandler(caller, 7) };
 		}
 	}
 
@@ -340,7 +340,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 8) };
+			return new string[] { this.plugin.VoteHandler(caller, 8) };
 		}
 	}
 
@@ -371,7 +371,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 9) };
+			return new string[] { this.plugin.VoteHandler(caller, 9) };
 		}
 	}
 
@@ -402,7 +402,7 @@ namespace Callvote
 			//Will be null if command was called by server console
 			Player caller = sender as Player;
 			// This will print 3 lines in console.
-			return new string[] { this.plugin.HandleVote(caller, 10) };
+			return new string[] { this.plugin.VoteHandler(caller, 10) };
 		}
 	}
 }

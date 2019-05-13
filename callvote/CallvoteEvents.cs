@@ -52,7 +52,7 @@ namespace Callvote
 				if (this.plugin.Voting())
 				{
 
-					ev.ReturnMessage = this.plugin.HandleVote(ev.Player, option);
+					ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, option);
 				}
 				else
 				{
@@ -71,19 +71,19 @@ namespace Callvote
 							.ToArray()
 							.Skip(1)
 							.ToArray();
-						ev.ReturnMessage = this.plugin.callvoteHandler(ev.Player, quotedArgs);
+						ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, quotedArgs);
 						break;
 
 					case "stopvote":
-						ev.ReturnMessage = this.plugin.stopvoteHandler(ev.Player);
+						ev.ReturnMessage = this.plugin.StopvoteHandler(ev.Player);
 						break;
 
 					case "yes":
-						ev.ReturnMessage = this.plugin.HandleVote(ev.Player, 1);
+						ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, 1);
 						break;
 
 					case "no":
-						ev.ReturnMessage = this.plugin.HandleVote(ev.Player, 2);
+						ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, 2);
 						break;
 				}
 			}

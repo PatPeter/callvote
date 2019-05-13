@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using Smod2;
+using Smod2; 
 using Smod2.API;
 using Smod2.Config;
 using Smod2.Attributes;
@@ -31,6 +31,7 @@ using Smod2.EventHandlers;
 using Smod2.Events;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Timers;
 using System.Linq;
 using Smod2.Piping;
@@ -38,13 +39,13 @@ using Smod2.Piping;
 namespace Callvote
 {
 	[PluginDetails(
-		author = "PatPeter",
-		name = "callvote",
-		description = "callvote command like in the Source engine. Vote to kick users, restart round, or make your own custom votes.",
-		id = "patpeter.callvote",
-		configPrefix = "cv",
-		langFile = "callvote",
-		version = "2.0.0.21",
+		author = AssemblyInfo.Author,
+		name = AssemblyInfo.Name,
+		description = AssemblyInfo.Description,
+		id = AssemblyInfo.Id,
+		configPrefix = AssemblyInfo.ConfigPrefix,
+		langFile = AssemblyInfo.LangFile,
+		version = AssemblyInfo.Version,
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -166,7 +167,7 @@ namespace Callvote
 			return false;
 		}
 
-		public string callvoteHandler(Player player, string[] args)
+		public string CallvoteHandler(Player player, string[] args) // lowercase to match command
 		{
 			this.Info(player.Name + " called vote with arguments: ");
 			for (int i = 0; i < args.Length; i++)
@@ -213,9 +214,7 @@ namespace Callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										CurrentVote = new Vote(player.Name + " asks: Kick " + locatedPlayer.Name + "?", options);
-
-										CurrentVote.Callback = delegate(Vote vote)
+										StartVote(new Vote(player.Name + " asks: Kick " + locatedPlayer.Name + "?", options), delegate(Vote vote)
 										{
 											int votePercent = (int) ((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 											if (votePercent >= this.ThresholdKick)
@@ -227,7 +226,7 @@ namespace Callvote
 											{
 												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdKick + "% was required to kick " + locatedPlayer.Name + ".", false);
 											}
-										};
+										});
 
 										break;
 									}
@@ -265,9 +264,7 @@ namespace Callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										CurrentVote = new Vote(player.Name + " asks: Kill " + locatedPlayer.Name + "?", options);
-
-										CurrentVote.Callback = delegate (Vote vote)
+										StartVote(new Vote(player.Name + " asks: Kill " + locatedPlayer.Name + "?", options), delegate (Vote vote)
 										{
 											int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 											if (votePercent >= this.ThresholdKill)
@@ -279,7 +276,7 @@ namespace Callvote
 											{
 												this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdKill + "% was required to kill " + locatedPlayer.Name + ".", false);
 											}
-										};
+										});
 
 										break;
 									}
@@ -304,8 +301,7 @@ namespace Callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								CurrentVote = new Vote(player.Name + " asks: NUKE THE FACILITY?!?", options);
-								CurrentVote.Callback = delegate (Vote vote)
+								StartVote(new Vote(player.Name + " asks: NUKE THE FACILITY?!?", options), delegate (Vote vote)
 								{
 									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 									if (votePercent >= this.ThresholdNuke)
@@ -317,7 +313,7 @@ namespace Callvote
 									{
 										this.Server.Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + this.ThresholdNuke + "% was required to nuke the facility.", false);
 									}
-								};
+								});
 								break;
 							}
 							else
@@ -335,7 +331,7 @@ namespace Callvote
 								options[2] = "MTF";
 								options[3] = "CI";
 
-								StartVote(player.Name + " asks: Respawn the next wave?", options, delegate (Vote vote)
+								StartVote(new Vote(player.Name + " asks: Respawn the next wave?", options), delegate (Vote vote)
 								{
 									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)(this.Server.NumPlayers - 1) * 100f);
@@ -371,7 +367,7 @@ namespace Callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								StartVote(player.Name + " asks: Restart the round?", options, delegate (Vote vote)
+								StartVote(new Vote(player.Name + " asks: Restart the round?", options), delegate (Vote vote)
 								{
 									int votePercent = (int)((float)vote.Counter[1] / (float)(this.Server.NumPlayers - 1) * 100f);
 									if (votePercent >= this.ThresholdRestartRound)
@@ -412,7 +408,7 @@ namespace Callvote
 									options[i] = args[i];
 								}
 							}
-							StartVote(player.Name + " asks: " + args[0], options, null);
+							StartVote(new Vote(player.Name + " asks: " + args[0], options), null);
 							break;
 					}
 					return "Vote has been started!";
@@ -433,15 +429,21 @@ namespace Callvote
 			}
 		}
 
-		[PipeMethod]
-		public bool StartVote(string question, Dictionary<int, string> options, CallvoteFunction callback)
+		[PipeEvent("patpeter.callvote.OnStartVote")]
+		public void OnStartVote(string question, Dictionary<int, string> options, HashSet<string> votes, Dictionary<int, int> counter)
+		{
+			Vote newVote = new Vote(question, options, votes, counter);
+			StartVote(newVote, null);
+		}
+
+		public bool StartVote(Vote newVote, CallvoteFunction callback)
 		{
 			if (CurrentVote != null)
 			{
 				return false;
 			}
 
-			CurrentVote = new Vote(question, options);
+			CurrentVote = newVote;
 			CurrentVote.Callback = callback;
 			string firstBroadcast = CurrentVote.Question + " Press ~ and type ";
 			int counter = 0;
@@ -507,7 +509,7 @@ namespace Callvote
 			return true;
 		}
 		
-		public string stopvoteHandler(Player player)
+		public string StopvoteHandler(Player player)
 		{
 			if (!CanCallVotes(player))
 			{
@@ -542,7 +544,7 @@ namespace Callvote
 			}
 		}
 
-		public string HandleVote(Player player, int option)
+		public string VoteHandler(Player player, int option)
 		{
 			if (CurrentVote != null)
 			{
@@ -577,9 +579,9 @@ namespace Callvote
 	class Vote
 	{
 		public string Question;
-		public Dictionary<int, string> Options = new Dictionary<int, string>();
-		public HashSet<string> Votes = new HashSet<string>();
-		public Dictionary<int, int> Counter = new Dictionary<int, int>();
+		public Dictionary<int, string> Options;
+		public HashSet<string> Votes;
+		public Dictionary<int, int> Counter;
 		public Timer Timer;
 		public CallvoteFunction Callback;
 
@@ -587,6 +589,21 @@ namespace Callvote
 		{
 			this.Question = question;
 			this.Options = options;
+			this.Votes = new HashSet<string>();
+			this.Counter = new Dictionary<int, int>();
+			foreach (int option in options.Keys)
+			{
+				Counter[option] = 0;
+			}
+		}
+
+		// Allow Votes and Counter to be passed in and saved by reference for Event code
+		public Vote(string question, Dictionary<int, string> options, HashSet<string> votes, Dictionary<int, int> counter)
+		{
+			this.Question = question;
+			this.Options = options;
+			this.Votes = votes;
+			this.Counter = counter;
 			foreach (int option in options.Keys)
 			{
 				Counter[option] = 0;
