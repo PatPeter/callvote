@@ -57,6 +57,7 @@ namespace Callvote
 
 		internal string[] AllowedRoles = { "owner", "admin", "moderator" };
 		internal int VoteDuration = 30;
+		internal int VoteCooldown = 30;
 
 		internal bool EnableKick = false;
 		internal bool EnableKill = false;
@@ -84,6 +85,7 @@ namespace Callvote
 		{
 			AllowedRoles = this.GetConfigList("callvote_allowed_roles");
 			VoteDuration = this.GetConfigInt("callvote_vote_duration");
+			VoteCooldown = this.GetConfigInt("callvote_vote_cooldown");
 
 			EnableKick = this.GetConfigBool("callvote_enable_kick");
 			EnableKill = this.GetConfigBool("callvote_enable_kill");
@@ -124,6 +126,7 @@ namespace Callvote
 			// Register config setting(s)
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_allowed_roles", new string[] { "owner", "admin", "moderator" }, true, "List of role allowed to call custom votes."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_duration", 30, true, "Number of seconds for a vote to last for."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_vote_cooldown", 30, true, "Number of seconds before a vote can be called."));
 
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kick", false, true, "Enable callvote Kick."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("callvote_enable_kill", false, true, "Enable callvote Kill."));
@@ -436,6 +439,7 @@ namespace Callvote
 			StartVote(newVote, null);
 		}
 
+		[PipeMethod]
 		public bool StartVote(Vote newVote, CallvoteFunction callback)
 		{
 			if (CurrentVote != null)
