@@ -300,8 +300,8 @@ namespace callvote
 										//Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.NineTailedFox);
 										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().nextWaveIsCI = false;
 										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RespawnDeadPlayers();
-										Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.NineTailedFox;
-										Respawning.RespawnManager.Singleton.Start();
+										//Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.NineTailedFox;
+										Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.NineTailedFox);
 
 									}
 									else if (ciVotePercent >= Plugin.Instance.Config.ThresholdRespawnWave)
@@ -311,8 +311,8 @@ namespace callvote
 										//Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.ChaosInsurgency);
 										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().nextWaveIsCI = true;
 										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RespawnDeadPlayers();
-										Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.ChaosInsurgency;
-										Respawning.RespawnManager.Singleton.Start();
+										//Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.ChaosInsurgency;
+										Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.ChaosInsurgency);
 									}
 									else
 									{

@@ -36,12 +36,12 @@ namespace callvote
 				switch (command)
 				{
 					case "callvote":
-						/*string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Command), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
+						string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Arguments), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
 							.Cast<Match>()
 							.Select(m => m.Value)
 							.ToArray()
 							.Skip(1)
-							.ToArray();*/
+							.ToArray();
 						ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, ev.Arguments.ToArray());
 						break;
 
