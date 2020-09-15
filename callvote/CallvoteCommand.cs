@@ -32,9 +32,9 @@ namespace Callvote
 {
 	class CallvoteCommand : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public CallvoteCommand(CallvotePlugin plugin)
+		public CallvoteCommand(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -67,9 +67,9 @@ namespace Callvote
 	}
 	class StopvoteCommand : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public StopvoteCommand(CallvotePlugin plugin)
+		public StopvoteCommand(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -98,9 +98,9 @@ namespace Callvote
 
 	class Vote1Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote1Command(CallvotePlugin plugin)
+		public Vote1Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -129,9 +129,9 @@ namespace Callvote
 
 	class Vote2Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote2Command(CallvotePlugin plugin)
+		public Vote2Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -160,9 +160,9 @@ namespace Callvote
 
 	class Vote3Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote3Command(CallvotePlugin plugin)
+		public Vote3Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -191,9 +191,9 @@ namespace Callvote
 
 	class Vote4Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote4Command(CallvotePlugin plugin)
+		public Vote4Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -222,9 +222,9 @@ namespace Callvote
 
 	class Vote5Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote5Command(CallvotePlugin plugin)
+		public Vote5Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -253,9 +253,9 @@ namespace Callvote
 
 	class Vote6Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote6Command(CallvotePlugin plugin)
+		public Vote6Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -284,9 +284,9 @@ namespace Callvote
 
 	class Vote7Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote7Command(CallvotePlugin plugin)
+		public Vote7Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -315,9 +315,9 @@ namespace Callvote
 
 	class Vote8Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote8Command(CallvotePlugin plugin)
+		public Vote8Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -346,9 +346,9 @@ namespace Callvote
 
 	class Vote9Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote9Command(CallvotePlugin plugin)
+		public Vote9Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;
@@ -377,9 +377,9 @@ namespace Callvote
 
 	class Vote0Command : ICommandHandler
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public Vote0Command(CallvotePlugin plugin)
+		public Vote0Command(Plugin plugin)
 		{
 			//Constructor passing plugin refrence to this class
 			this.plugin = plugin;

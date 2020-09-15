@@ -50,7 +50,7 @@ namespace Callvote
 		SmodMinor = 4,
 		SmodRevision = 0
 		)]
-	class CallvotePlugin : Plugin
+	class Plugin : Smod2.Plugin
 	{
 		//bool voteInProgress = false;
 		internal Vote CurrentVote = null;
@@ -105,7 +105,7 @@ namespace Callvote
 			// Register multiple events
 			//this.AddEventHandlers(new RoundEventHandler(this));
 			//Register multiple events with Low Priority
-			this.AddEventHandlers(new CallvoteEvents(this), Priority.Normal);
+			this.AddEventHandlers(new EventHandlers(this), Priority.Normal);
 			// Register single event with priority (need to specify the handler type)
 			//this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new LottoItemHandler(this), Priority.High);
 			// Register Command(s)

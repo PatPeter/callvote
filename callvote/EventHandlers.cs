@@ -33,11 +33,11 @@ using System.Linq;
 
 namespace Callvote
 {
-	class CallvoteEvents : IEventHandlerCallCommand, IEventHandlerWaitingForPlayers
+	class EventHandlers : IEventHandlerCallCommand, IEventHandlerWaitingForPlayers
 	{
-		private readonly CallvotePlugin plugin;
+		private readonly Plugin plugin;
 
-		public CallvoteEvents(CallvotePlugin plugin)
+		public EventHandlers(Plugin plugin)
 		{
 			this.plugin = plugin;
 		}
