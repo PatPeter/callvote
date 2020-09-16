@@ -40,9 +40,9 @@ namespace callvote
 							.Cast<Match>()
 							.Select(m => m.Value)
 							.ToArray()
-							.Skip(1)
+							//.Skip(1)
 							.ToArray();
-						ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, ev.Arguments.ToArray());
+						ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, quotedArgs);
 						break;
 
 					case "stopvote":
