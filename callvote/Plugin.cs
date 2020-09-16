@@ -172,7 +172,7 @@ namespace callvote
 
 										StartVote(new Vote(playerNickname + " asks: Kick " + locatedPlayerName + "?", options), delegate (Vote vote)
 										{
-											int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count() - 1) * 100f);
+											int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
 											if (votePercent >= Plugin.Instance.Config.ThresholdKick)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayerName + ".");
@@ -223,7 +223,7 @@ namespace callvote
 
 										StartVote(new Vote(playerNickname + " asks: Kill " + locatedPlayerName + "?", options), delegate (Vote vote)
 										{
-											int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count() - 1) * 100f);
+											int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
 											if (votePercent >= Plugin.Instance.Config.ThresholdKill)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayerName + ".");
@@ -260,11 +260,11 @@ namespace callvote
 
 								StartVote(new Vote(playerNickname + " asks: NUKE THE FACILITY?!?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count() - 1) * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
 									if (votePercent >= Plugin.Instance.Config.ThresholdNuke)
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Nuking the facility...");
-										Exiled.API.Features.Warhead.Start();
+										Exiled.API.Features.Warhead.Detonate();
 									}
 									else
 									{
@@ -290,9 +290,9 @@ namespace callvote
 
 								StartVote(new Vote(playerNickname + " asks: Respawn the next wave?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count() - 1) * 100f);
-									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)(Player.List.Count() - 1) * 100f);
-									int ciVotePercent = (int)((float)vote.Counter[3] / (float)(Player.List.Count() - 1) * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
+									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)Player.List.Count() * 100f);
+									int ciVotePercent = (int)((float)vote.Counter[3] / (float)Player.List.Count() * 100f);
 									if (mtfVotePercent >= Plugin.Instance.Config.ThresholdRespawnWave)
 									{
 										Map.Broadcast(5, mtfVotePercent + "% voted yes. Respawning a wave of Nine-Tailed Fox...");
@@ -337,7 +337,7 @@ namespace callvote
 
 								StartVote(new Vote(playerNickname + " asks: Restart the round?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count() - 1) * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
 									if (votePercent >= Plugin.Instance.Config.ThresholdRestartRound)
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...");
