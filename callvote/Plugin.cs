@@ -264,7 +264,7 @@ namespace callvote
 									if (votePercent >= Plugin.Instance.Config.ThresholdNuke)
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Nuking the facility...");
-										Exiled.API.Features.Warhead.Detonate();
+										Exiled.API.Features.Warhead.Start();
 									}
 									else
 									{
