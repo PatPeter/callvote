@@ -36,8 +36,8 @@ namespace callvote
 		public string[] AllowedRoles { get; set; } = new string[] { "owner", "admin", "moderator" };
 
 		public int VoteDuration { get; set; } = 30;
-		public int VoteCooldown { get; set; } = 30;
-
+		public int VoteCooldown { get; set; } = 60;
+		public int MaxAmountOfVotesPerRound { get; set; } = 3;
 		public bool EnableKick { get; set; } = false;
 		public bool EnableKill { get; set; } = false;
 		public bool EnableNuke { get; set; } = false;
