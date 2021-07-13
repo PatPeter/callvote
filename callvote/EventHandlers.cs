@@ -7,8 +7,9 @@ using System.Linq;
 namespace callvote
 {
 	using Exiled.Events.EventArgs;
+    using Exiled.Permissions.Extensions;
 
-	public class EventHandlers
+    public class EventHandlers
 	{
 		public Plugin plugin;
 		public EventHandlers(Plugin plugin) => this.plugin = plugin;
@@ -36,15 +37,23 @@ namespace callvote
 
 				switch (command)
 				{
+					
 					case "callvote":
-						ev.Allow = true;
-						string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Arguments), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
-							.Cast<Match>()
-							.Select(m => m.Value)
-							.ToArray()
-							//.Skip(1)
-							.ToArray();
-						ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, quotedArgs);
+						if (ev.Player.CheckPermission("cv.callvote"))
+						{
+							ev.Allow = true;
+							string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Arguments), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
+								.Cast<Match>()
+								.Select(m => m.Value)
+								.ToArray()
+								//.Skip(1)
+								.ToArray();
+							ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, quotedArgs);
+						}
+						else
+						{
+							ev.ReturnMessage = "You do not have permission to run this command";
+						}
 						break;
 
 					case "stopvote":

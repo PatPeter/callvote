@@ -32,9 +32,6 @@ namespace callvote
 		/// <inheritdoc/>
 		[Description("Enable or disable the plugin. Defaults to true.")]
 		public bool IsEnabled { get; set; } = true;
-
-		public string[] AllowedRoles { get; set; } = new string[] { "owner", "admin", "moderator" };
-
 		public int VoteDuration { get; set; } = 30;
 		public int VoteCooldown { get; set; } = 60;
 		public int MaxAmountOfVotesPerRound { get; set; } = 3;

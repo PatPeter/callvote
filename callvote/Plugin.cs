@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Exiled.API.Features;
 using MEC;
+using Exiled.Permissions.Extensions;
 
 namespace callvote
 {
@@ -62,37 +63,6 @@ namespace callvote
 
 		public override string Name { get; } = "callvote";
 		public Dictionary<int, int> DictionaryOfVotes = new Dictionary<int, int>();
-
-		public bool CanCallVotes(Player player)
-		{
-			if (player == null)
-			{
-				return false;
-			}
-			string playerGroupName = player.GroupName;
-			string playerBadgeName = player.RankName;
-			//UserGroup playerGroup = Player.GetRank(player);
-
-			foreach (string role in Plugin.Instance.Config.AllowedRoles)
-			{
-				//if (playerGroup != null)
-				//{
-				if (String.Equals(role, playerGroupName, StringComparison.CurrentCultureIgnoreCase))
-				{
-					return true;
-				}
-				else if (String.Equals(role, playerBadgeName, StringComparison.CurrentCultureIgnoreCase))
-				{
-					return true;
-				}
-				//}
-				//if (String.Equals(role, player.GetRankName(), StringComparison.CurrentCultureIgnoreCase))
-				//{
-				//	return true;
-				//}
-			}
-			return false;
-		}
 		public int timeOfLastVote = 0;
 		private CoroutineHandle voteCoroutine = new CoroutineHandle();
 		public string CallvoteHandler(Player player, string[] args) // lowercase to match command
@@ -341,10 +311,6 @@ namespace callvote
 
 						default:
 							//voteInProgress = true;
-							if (!CanCallVotes(player))
-							{
-								return "Your group, " + playerGroupName + "/" + playerBadgeName + ", is not allowed to call votes.";
-							}
 
 							if (args.Length == 1)
 							{
@@ -447,11 +413,10 @@ namespace callvote
 
 		public string StopvoteHandler(Player player)
 		{
-			string playerGroupName = player.GroupName;
-			string playerBadgeName = player.RankName;
-			if (!CanCallVotes(player))
+
+			if (!player.CheckPermission("cv.stopvote"))
 			{
-				return "Your group, " + playerGroupName + "/" + playerBadgeName + ", is not allowed to stop votes.";
+				return "You do not have permission to run this command";
 			}
 
 			if (this.StopVote())
