@@ -3,13 +3,13 @@ using System.Timers;
 using System.Collections.Generic;
 using System.Linq;
 using Exiled.API.Features;
+using MEC;
 
 namespace callvote
 {
 	public class Plugin : Plugin<Config>
 	{
 		private static readonly Lazy<Plugin> LazyInstance = new Lazy<Plugin>(() => new Plugin());
-
 		//Instance variable for eventhandlers
 		public EventHandlers EventHandlers;
 
@@ -28,7 +28,6 @@ namespace callvote
 		public override void OnEnabled()
 		{
 			//ReloadConfig();
-
 			try
 			{
 				Log.Debug("Initializing event handlers..");
@@ -37,6 +36,7 @@ namespace callvote
 				//Hook the events you will be using in the plugin. You should hook all events you will be using here, all events should be unhooked in OnDisabled 
 				Exiled.Events.Handlers.Server.SendingConsoleCommand += EventHandlers.OnConsoleCommand;
 				Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
+				Exiled.Events.Handlers.Server.RoundEnded += EventHandlers.OnRoundEnded;
 				Log.Info($"callvote loaded!");
 			}
 			catch (Exception e)
@@ -50,6 +50,7 @@ namespace callvote
 		{
 			Exiled.Events.Handlers.Server.SendingConsoleCommand -= EventHandlers.OnConsoleCommand;
 			Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
+			Exiled.Events.Handlers.Server.RoundEnded -= EventHandlers.OnRoundEnded;
 
 			EventHandlers = null;
 		}
@@ -60,33 +61,7 @@ namespace callvote
 		}
 
 		public override string Name { get; } = "callvote";
-
-		/*public void ReloadConfig()
-		{
-			List<string> allowedRoles = Config.GetStringList("callvote_allowed_roles");
-			if (allowedRoles.Count != 0)
-			{
-				AllowedRoles = allowedRoles.ToArray();
-			}
-			else
-			{
-				AllowedRoles = new string[] { "owner", "admin", "moderator" };
-			}
-			VoteDuration = Config.GetInt("callvote_vote_duration", 30);
-			VoteCooldown = Config.GetInt("callvote_vote_cooldown", 30);
-
-			EnableKick = Config.GetBool("callvote_enable_kick", false);
-			EnableKill = Config.GetBool("callvote_enable_kill", false);
-			EnableNuke = Config.GetBool("callvote_enable_nuke", false);
-			EnableRespawnWave = Config.GetBool("callvote_enable_respawnwave", false);
-			EnableRestartRound = Config.GetBool("callvote_enable_restartround", false);
-
-			ThresholdKick = Config.GetInt("callvote_threshold_kick", 80);
-			ThresholdKill = Config.GetInt("callvote_threshold_kill", 80);
-			ThresholdNuke = Config.GetInt("callvote_threshold_nuke", 80);
-			ThresholdRespawnWave = Config.GetInt("callvote_threshold_respawnwave", 80);
-			ThresholdRestartRound = Config.GetInt("callvote_threshold_restartround", 80);
-		}*/
+		public Dictionary<int, int> DictionaryOfVotes = new Dictionary<int, int>();
 
 		public bool CanCallVotes(Player player)
 		{
@@ -118,7 +93,8 @@ namespace callvote
 			}
 			return false;
 		}
-
+		public int timeOfLastVote = 0;
+		private CoroutineHandle voteCoroutine = new CoroutineHandle();
 		public string CallvoteHandler(Player player, string[] args) // lowercase to match command
 		{
 			string playerNickname = player.Nickname;
@@ -129,20 +105,36 @@ namespace callvote
 			{
 				Log.Info("\t" + i + ": " + args[i]);
 			}
-			if (args.Length == 0)
+			if (DictionaryOfVotes.ContainsKey(player.Id))
+			{
+				if(DictionaryOfVotes[player.Id] > Plugin.Instance.Config.MaxAmountOfVotesPerRound -1)
+				{
+					return "Max amounts of votes done this round";
+				}
+			}
+				if (args.Length == 0)
 			{
 				//return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
 				return "callvote Kick/Kill/<custom> <player>/[options]";
 			}
 			else
 			{
-				if (CurrentVote != null)
+				int timestamp = (int)(DateTime.Now - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+				if (CurrentVote != null || timestamp - timeOfLastVote < Plugin.Instance.Config.VoteCooldown)
 				{
 					//return new string[] { "A vote is currently in progress." };
-					return "A vote is currently in progress.";
+					return "A vote is currently in progress or the vote is on cooldown";
 				}
 				else
 				{
+					if (DictionaryOfVotes.ContainsKey(player.Id))
+					{
+						DictionaryOfVotes[player.Id] = DictionaryOfVotes[player.Id] + 1;
+					}
+					else
+					{
+						DictionaryOfVotes.Add(player.Id,1);
+					}
 					Dictionary<int, string> options = new Dictionary<int, string>();
 					switch (args[0].ToLower())
 					{
@@ -170,9 +162,9 @@ namespace callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										StartVote(new Vote(playerNickname + " asks: Kick " + locatedPlayerName + "?", options), delegate (Vote vote)
+										voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: Kick " + locatedPlayerName + "?", options), delegate (Vote vote)
 										{
-											int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
+											int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count()) * 100f);
 											if (votePercent >= Plugin.Instance.Config.ThresholdKick)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayerName + ".");
@@ -182,7 +174,7 @@ namespace callvote
 											{
 												Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + Plugin.Instance.Config.ThresholdKick + "% was required to kick " + locatedPlayerName + ".");
 											}
-										});
+										}));
 
 										break;
 									}
@@ -221,9 +213,9 @@ namespace callvote
 										options[1] = "Yes";
 										options[2] = "No";
 
-										StartVote(new Vote(playerNickname + " asks: Kill " + locatedPlayerName + "?", options), delegate (Vote vote)
+										voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: Kill " + locatedPlayerName + "?", options), delegate (Vote vote)
 										{
-											int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
+											int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count()) * 100f);
 											if (votePercent >= Plugin.Instance.Config.ThresholdKill)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayerName + ".");
@@ -233,7 +225,7 @@ namespace callvote
 											{
 												Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + Plugin.Instance.Config.ThresholdKill + "% was required to kill " + locatedPlayerName + ".");
 											}
-										});
+										}));
 
 										break;
 									}
@@ -258,19 +250,19 @@ namespace callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								StartVote(new Vote(playerNickname + " asks: NUKE THE FACILITY?!?", options), delegate (Vote vote)
+								voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: NUKE THE FACILITY?!?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count()) * 100f);
 									if (votePercent >= Plugin.Instance.Config.ThresholdNuke)
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Nuking the facility...");
-										Exiled.API.Features.Warhead.Detonate();
+										Exiled.API.Features.Warhead.Start();
 									}
 									else
 									{
 										Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + Plugin.Instance.Config.ThresholdNuke + "% was required to nuke the facility.");
 									}
-								});
+								}));
 								break;
 							}
 							else
@@ -288,37 +280,27 @@ namespace callvote
 								options[2] = "MTF";
 								options[3] = "CI";
 
-								StartVote(new Vote(playerNickname + " asks: Respawn the next wave?", options), delegate (Vote vote)
+								voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: Respawn the next wave?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
-									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)Player.List.Count() * 100f);
-									int ciVotePercent = (int)((float)vote.Counter[3] / (float)Player.List.Count() * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count()) * 100f);
+									int mtfVotePercent = (int)((float)vote.Counter[2] / (float)(Player.List.Count()) * 100f);
+									int ciVotePercent = (int)((float)vote.Counter[3] / (float)(Player.List.Count()) * 100f);
 									if (mtfVotePercent >= Plugin.Instance.Config.ThresholdRespawnWave)
 									{
 										Map.Broadcast(5, mtfVotePercent + "% voted yes. Respawning a wave of Nine-Tailed Fox...");
-										//this.Server.Round.MTFRespawn(false);
-										//Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.NineTailedFox);
-										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().nextWaveIsCI = false;
-										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RespawnDeadPlayers();
-										//Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.NineTailedFox;
 										Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.NineTailedFox);
 
 									}
 									else if (ciVotePercent >= Plugin.Instance.Config.ThresholdRespawnWave)
 									{
 										Map.Broadcast(5, ciVotePercent + "% voted yes. Respawning a wave of Chaos Insurgency...");
-										//this.Server.Round.MTFRespawn(true);
-										//Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.ChaosInsurgency);
-										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().nextWaveIsCI = true;
-										//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RespawnDeadPlayers();
-										//Respawning.RespawnManager.Singleton.NextKnownTeam = Respawning.SpawnableTeamType.ChaosInsurgency;
 										Respawning.RespawnManager.Singleton.ForceSpawnTeam(Respawning.SpawnableTeamType.ChaosInsurgency);
 									}
 									else
 									{
 										Map.Broadcast(5, votePercent + "% voted no. " + Plugin.Instance.Config.ThresholdRespawnWave + "% was required to respawn the next wave.");
 									}
-								});
+								}));
 								break;
 							}
 							else
@@ -335,9 +317,9 @@ namespace callvote
 								options[1] = "Yes";
 								options[2] = "No";
 
-								StartVote(new Vote(playerNickname + " asks: Restart the round?", options), delegate (Vote vote)
+								voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: Restart the round?", options), delegate (Vote vote)
 								{
-									int votePercent = (int)((float)vote.Counter[1] / (float)Player.List.Count() * 100f);
+									int votePercent = (int)((float)vote.Counter[1] / (float)(Player.List.Count()) * 100f);
 									if (votePercent >= Plugin.Instance.Config.ThresholdRestartRound)
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...");
@@ -349,7 +331,7 @@ namespace callvote
 									{
 										Map.Broadcast(5, "Only " + votePercent + "% voted yes. " + Plugin.Instance.Config.ThresholdRestartRound + "% was required to restart the round.");
 									}
-								});
+								}));
 								break;
 							}
 							else
@@ -378,9 +360,10 @@ namespace callvote
 									options[i] = args[i];
 								}
 							}
-							StartVote(new Vote(playerNickname + " asks: " + args[0], options), null);
+							voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: " + args[0], options), null));
 							break;
 					}
+					timeOfLastVote = (int)(DateTime.Now - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
 					return "Vote has been started!";
 				}
 			}
@@ -401,16 +384,12 @@ namespace callvote
 		public void OnStartVote(string question, Dictionary<int, string> options, HashSet<string> votes, Dictionary<int, int> counter)
 		{
 			Vote newVote = new Vote(question, options, votes, counter);
-			StartVote(newVote, null);
+			voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(newVote, null));
 		}
 
-		public bool StartVote(Vote newVote, CallvoteFunction callback)
+		public IEnumerator<float> StartVoteCoroutine(Vote newVote, CallvoteFunction callback)
 		{
-			if (CurrentVote != null)
-			{
-				return false;
-			}
-
+			int timerCounter = 0;
 			CurrentVote = newVote;
 			CurrentVote.Callback = callback;
 			string firstBroadcast = CurrentVote.Question + " Press ~ and type ";
@@ -428,21 +407,9 @@ namespace callvote
 				counter++;
 			}
 			Map.Broadcast(5, firstBroadcast);
-
-			int timerCounter = 0;
-			CurrentVote.Timer = new Timer
+			yield return Timing.WaitForSeconds(5f);
+			for (; ; )
 			{
-				Interval = 5000,
-				Enabled = true,
-				AutoReset = true
-			};
-			CurrentVote.Timer.Elapsed += delegate
-			{
-				if (CurrentVote.Timer.Interval == 5000)
-				{
-					CurrentVote.Timer.Interval = 1000;
-				}
-
 				if (timerCounter >= Plugin.Instance.Config.VoteDuration + 1)
 				{
 					if (CurrentVote.Callback == null)
@@ -458,9 +425,8 @@ namespace callvote
 					{
 						CurrentVote.Callback.Invoke(CurrentVote);
 					}
-
-					CurrentVote.Timer.Enabled = false;
 					CurrentVote = null;
+					yield break;
 				}
 				else
 				{
@@ -472,9 +438,8 @@ namespace callvote
 					Map.Broadcast(1, timerBroadcast);
 				}
 				timerCounter++;
-			};
-			//return new string[] { "Vote has been started!" };
-			return true;
+				yield return Timing.WaitForSeconds(1f);
+			}
 		}
 
 		public string StopvoteHandler(Player player)
@@ -498,13 +463,10 @@ namespace callvote
 
 		public bool StopVote()
 		{
-			if (this.CurrentVote != null)
+			if (voteCoroutine.IsRunning)
 			{
-				if (this.CurrentVote.Timer != null)
-				{
-					this.CurrentVote.Timer.Stop();
-				}
-				this.CurrentVote = null;
+				Timing.KillCoroutines(voteCoroutine);
+				CurrentVote = null;
 				return true;
 			}
 			else
