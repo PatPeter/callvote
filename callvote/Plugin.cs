@@ -406,7 +406,8 @@ namespace callvote
 				}
 				counter++;
 			}
-			Map.Broadcast(5, firstBroadcast);
+			int textsize = firstBroadcast.Length / 10;
+			Map.Broadcast(5, "<size="+(48-textsize).ToString()+">"+firstBroadcast+ "</size>");
 			yield return Timing.WaitForSeconds(5f);
 			for (; ; )
 			{
@@ -418,8 +419,9 @@ namespace callvote
 						foreach (KeyValuePair<int, string> kv in CurrentVote.Options)
 						{
 							timerBroadcast += CurrentVote.Options[kv.Key] + " (" + CurrentVote.Counter[kv.Key] + ") ";
+							textsize = timerBroadcast.Length / 10;
 						}
-						Map.Broadcast(5, timerBroadcast);
+						Map.Broadcast(5, "<size=" + (48 - textsize).ToString() + ">" + timerBroadcast + "</size>");
 					}
 					else
 					{
@@ -434,8 +436,9 @@ namespace callvote
 					foreach (KeyValuePair<int, string> kv in CurrentVote.Options)
 					{
 						timerBroadcast += CurrentVote.Options[kv.Key] + " (" + CurrentVote.Counter[kv.Key] + ") ";
+						textsize = timerBroadcast.Length / 10;
 					}
-					Map.Broadcast(1, timerBroadcast);
+					Map.Broadcast(1, "<size=" + (48 - textsize).ToString() + ">" + timerBroadcast + "</size>");
 				}
 				timerCounter++;
 				yield return Timing.WaitForSeconds(1f);
