@@ -23,13 +23,13 @@ namespace callvote
 			{
 				if (this.plugin.Voting())
 				{
-					ev.Allow = true;
 					ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, option);
+					ev.IsAllowed = false;
 				}
 				else
 				{
-					ev.Allow = true;
 					ev.ReturnMessage = "No vote is in progress.";
+					ev.IsAllowed = false;
 				}
 			}
 			else
@@ -41,7 +41,6 @@ namespace callvote
 					case "callvote":
 						if (ev.Player.CheckPermission("cv.callvote"))
 						{
-							ev.Allow = true;
 							string[] quotedArgs = Regex.Matches(string.Join(" ", ev.Arguments), "[^\\s\"\']+|\"([^\"]*)\"|\'([^\']*)\'")
 								.Cast<Match>()
 								.Select(m => m.Value)
@@ -49,26 +48,29 @@ namespace callvote
 								//.Skip(1)
 								.ToArray();
 							ev.ReturnMessage = this.plugin.CallvoteHandler(ev.Player, quotedArgs);
+							ev.IsAllowed = false;
 						}
 						else
 						{
 							ev.ReturnMessage = "You do not have permission to run this command";
+							ev.IsAllowed = false;
 						}
 						break;
 
 					case "stopvote":
-						ev.Allow = true;
+						
 						ev.ReturnMessage = this.plugin.StopvoteHandler(ev.Player);
+						ev.IsAllowed = false;
 						break;
 
 					case "yes":
-						ev.Allow = true;
 						ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, 1);
+						ev.IsAllowed = false;
 						break;
 
 					case "no":
-						ev.Allow = true;
 						ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, 2);
+						ev.IsAllowed = false;
 						break;
 				}
 			}
