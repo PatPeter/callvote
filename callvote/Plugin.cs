@@ -138,7 +138,11 @@ namespace callvote
 											if (votePercent >= Plugin.Instance.Config.ThresholdKick)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayerName + ".");
-												locatedPlayer.Kick(votePercent + "% voted to kick you.");
+												if(!locatedPlayer.CheckPermission("cv.untouchable"))
+												{
+													locatedPlayer.Kick(votePercent + "% voted to kick you.");
+												}
+												
 											}
 											else
 											{
@@ -189,7 +193,10 @@ namespace callvote
 											if (votePercent >= Plugin.Instance.Config.ThresholdKill)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayerName + ".");
-												locatedPlayer.Kill();
+												if (!locatedPlayer.CheckPermission("cv.untouchable"))
+												{
+													locatedPlayer.Kill();
+												}
 											}
 											else
 											{
