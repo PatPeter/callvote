@@ -354,6 +354,21 @@ namespace callvote
 			}
 		}
 
+		public string Rigging(int argument)
+		{
+			string response = "vote not active";
+			if (CurrentVote != null)
+			{
+				response = "could not find option";
+				if (CurrentVote.Options.ContainsKey(argument))
+				{
+					CurrentVote.Counter[argument]++;
+					response = "vote added";
+				}
+			}
+			return response;
+		}
+
 		public void OnStartVote(string question, Dictionary<int, string> options, HashSet<string> votes, Dictionary<int, int> counter)
 		{
 			Vote newVote = new Vote(question, options, votes, counter);

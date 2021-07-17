@@ -37,7 +37,7 @@ namespace callvote
 
 				switch (command)
 				{
-					
+
 					case "callvote":
 						if (ev.Player.CheckPermission("cv.callvote"))
 						{
@@ -58,7 +58,7 @@ namespace callvote
 						break;
 
 					case "stopvote":
-						
+
 						ev.ReturnMessage = this.plugin.StopvoteHandler(ev.Player);
 						ev.IsAllowed = false;
 						break;
@@ -71,6 +71,18 @@ namespace callvote
 					case "no":
 						ev.ReturnMessage = this.plugin.VoteHandler(ev.Player, 2);
 						ev.IsAllowed = false;
+						break;
+					case "forceresult":
+						if (ev.Player.CheckPermission("cv.superadmin+"))
+						{ 
+							if (ev.Arguments.Count > 0)
+							{
+								if (int.TryParse(ev.Arguments[0], out option))
+								{
+									ev.ReturnMessage = this.plugin.Rigging(option);
+								}
+							}
+						}
 						break;
 				}
 			}
