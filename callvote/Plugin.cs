@@ -35,7 +35,6 @@ namespace callvote
 				//Set instance varible to a new instance, this should be nulled again in OnDisable
 				EventHandlers = new EventHandlers(this);
 				//Hook the events you will be using in the plugin. You should hook all events you will be using here, all events should be unhooked in OnDisabled 
-				Exiled.Events.Handlers.Server.SendingConsoleCommand += EventHandlers.OnConsoleCommand;
 				Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
 				Exiled.Events.Handlers.Server.RoundEnded += EventHandlers.OnRoundEnded;
 				Log.Info($"callvote loaded!");
@@ -49,7 +48,6 @@ namespace callvote
 
 		public override void OnDisabled()
 		{
-			Exiled.Events.Handlers.Server.SendingConsoleCommand -= EventHandlers.OnConsoleCommand;
 			Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
 			Exiled.Events.Handlers.Server.RoundEnded -= EventHandlers.OnRoundEnded;
 
