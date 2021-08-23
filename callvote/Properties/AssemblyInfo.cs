@@ -49,6 +49,6 @@ namespace Callvote
 		internal const string Id = "patpeter.callvote";
 		internal const string ConfigPrefix = "callvote";
 		internal const string LangFile = "callvote";
-		internal const string Version = "2.1.4.26";
+		internal const string Version = "3.0.0";
 	}
 }
