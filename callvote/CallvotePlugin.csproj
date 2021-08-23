@@ -36,29 +36,39 @@
     <Reference Include="0Harmony">
       <HintPath>..\..\References\dependencies\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\References\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>..\..\References\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="CommandSystem.Core">
       <HintPath>..\..\References\CommandSystem.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.API">
-      <HintPath>..\..\References\dependencies\Exiled.API.dll</HintPath>
+    <Reference Include="Exiled.API, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.API.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Events">
-      <HintPath>..\..\References\Exiled.Events.dll</HintPath>
+    <Reference Include="Exiled.Bootstrap, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.Bootstrap.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Loader">
-      <HintPath>..\..\References\Exiled.Loader.dll</HintPath>
+    <Reference Include="Exiled.CreditTags, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.CreditTags.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Permissions">
-      <HintPath>..\..\References\Exiled.Permissions.dll</HintPath>
+    <Reference Include="Exiled.CustomItems, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.CustomItems.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Updater">
-      <HintPath>..\..\References\Exiled.Updater.dll</HintPath>
+    <Reference Include="Exiled.Events, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.Events.dll</HintPath>
+    </Reference>
+    <Reference Include="Exiled.Loader, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.Loader.dll</HintPath>
+    </Reference>
+    <Reference Include="Exiled.Permissions, Version=3.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="Exiled.Updater, Version=3.1.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.3.0.0-alpha.53\lib\net472\Exiled.Updater.dll</HintPath>
     </Reference>
     <Reference Include="Mirror">
       <HintPath>..\..\References\Mirror.dll</HintPath>
@@ -80,12 +90,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CallVoteCommand.cs" />
+    <Compile Include="Commands\ForceResultCommand.cs" />
+    <Compile Include="Commands\NoCommand.cs" />
+    <Compile Include="Commands\Number10Command.cs" />
+    <Compile Include="Commands\Number2Command.cs" />
+    <Compile Include="Commands\Number3Command.cs" />
+    <Compile Include="Commands\Number4Command.cs" />
+    <Compile Include="Commands\Number5Command.cs" />
+    <Compile Include="Commands\Number6Command.cs" />
+    <Compile Include="Commands\Number7Command.cs" />
+    <Compile Include="Commands\Number8Command.cs" />
+    <Compile Include="Commands\Number9Command.cs" />
+    <Compile Include="Commands\NumberVotingCommand.cs" />
+    <Compile Include="Commands\StopVoteCommand.cs" />
+    <Compile Include="Commands\YesCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

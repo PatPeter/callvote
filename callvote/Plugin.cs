@@ -35,7 +35,6 @@ namespace callvote
 				//Set instance varible to a new instance, this should be nulled again in OnDisable
 				EventHandlers = new EventHandlers(this);
 				//Hook the events you will be using in the plugin. You should hook all events you will be using here, all events should be unhooked in OnDisabled 
-				Exiled.Events.Handlers.Server.SendingConsoleCommand += EventHandlers.OnConsoleCommand;
 				Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
 				Exiled.Events.Handlers.Server.RoundEnded += EventHandlers.OnRoundEnded;
 				Log.Info($"callvote loaded!");
@@ -49,7 +48,6 @@ namespace callvote
 
 		public override void OnDisabled()
 		{
-			Exiled.Events.Handlers.Server.SendingConsoleCommand -= EventHandlers.OnConsoleCommand;
 			Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
 			Exiled.Events.Handlers.Server.RoundEnded -= EventHandlers.OnRoundEnded;
 
@@ -138,7 +136,11 @@ namespace callvote
 											if (votePercent >= Plugin.Instance.Config.ThresholdKick)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Kicking player " + locatedPlayerName + ".");
-												locatedPlayer.Kick(votePercent + "% voted to kick you.");
+												if(!locatedPlayer.CheckPermission("cv.untouchable"))
+												{
+													locatedPlayer.Kick(votePercent + "% voted to kick you.");
+												}
+												
 											}
 											else
 											{
@@ -189,7 +191,10 @@ namespace callvote
 											if (votePercent >= Plugin.Instance.Config.ThresholdKill)
 											{
 												Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayerName + ".");
-												locatedPlayer.Kill();
+												if (!locatedPlayer.CheckPermission("cv.untouchable"))
+												{
+													locatedPlayer.Kill();
+												}
 											}
 											else
 											{
@@ -345,6 +350,21 @@ namespace callvote
 			{
 				return false;
 			}
+		}
+
+		public string Rigging(int argument)
+		{
+			string response = "vote not active";
+			if (CurrentVote != null)
+			{
+				response = "could not find option";
+				if (CurrentVote.Options.ContainsKey(argument))
+				{
+					CurrentVote.Counter[argument]++;
+					response = "vote added";
+				}
+			}
+			return response;
 		}
 
 		public void OnStartVote(string question, Dictionary<int, string> options, HashSet<string> votes, Dictionary<int, int> counter)
