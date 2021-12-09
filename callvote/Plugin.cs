@@ -5,26 +5,30 @@ using System.Linq;
 using Exiled.API.Features;
 using MEC;
 using Exiled.Permissions.Extensions;
+using Exiled.API.Enums;
 
 namespace callvote
 {
 	public class Plugin : Plugin<Config>
 	{
-		private static readonly Lazy<Plugin> LazyInstance = new Lazy<Plugin>(() => new Plugin());
+		public static Plugin Instance { get; } = new Plugin();
+
+		public override string Name { get; } = Callvote.AssemblyInfo.Name;
+		public override string Author { get; } = Callvote.AssemblyInfo.Author;
+		public override Version Version { get; } = new Version(Callvote.AssemblyInfo.Version);
+		public override string Prefix { get; } = Callvote.AssemblyInfo.ConfigPrefix;
+		public override Version RequiredExiledVersion { get; } = new Version(4, 0, 12);
+		public override PluginPriority Priority { get; } = PluginPriority.Default;
+
 		//Instance variable for eventhandlers
 		public EventHandlers EventHandlers;
+
+		//bool voteInProgress = false;
+		internal Vote CurrentVote = null;
 
 		private Plugin()
 		{
 		}
-
-		/// <summary>
-		/// Gets the lazy instance.
-		/// </summary>
-		public static Plugin Instance => LazyInstance.Value;
-
-		//bool voteInProgress = false;
-		internal Vote CurrentVote = null;
 
 		public override void OnEnabled()
 		{
@@ -58,8 +62,7 @@ namespace callvote
 		{
 			//This is only fired when you use the EXILED reload command, the reload command will call OnDisable, OnReload, reload the plugin, then OnEnable in that order. There is no GAC bypass, so if you are updating a plugin, it must have a unique assembly name, and you need to remove the old version from the plugins folder
 		}
-
-		public override string Name { get; } = "callvote";
+		
 		public Dictionary<int, int> DictionaryOfVotes = new Dictionary<int, int>();
 		public int timeOfLastVote = 0;
 		private CoroutineHandle voteCoroutine = new CoroutineHandle();
@@ -193,7 +196,7 @@ namespace callvote
 												Map.Broadcast(5, votePercent + "% voted yes. Killing player " + locatedPlayerName + ".");
 												if (!locatedPlayer.CheckPermission("cv.untouchable"))
 												{
-													locatedPlayer.Kill();
+													locatedPlayer.Kill("callvote");
 												}
 											}
 											else
@@ -299,7 +302,8 @@ namespace callvote
 									{
 										Map.Broadcast(5, votePercent + "% voted yes. Restarting the round...");
 										//this.Server.Round.RestartRound();
-										PlayerManager.localPlayer.GetComponent<PlayerStats>().Roundrestart();
+										//PlayerManager.localPlayer.GetComponent<PlayerStats>().Roundrestart();
+										Round.Restart();
 
 									}
 									else
