@@ -16,7 +16,7 @@ namespace callvote
 		public override string Name { get; } = Callvote.AssemblyInfo.Name;
 		public override string Author { get; } = Callvote.AssemblyInfo.Author;
 		public override Version Version { get; } = new Version(Callvote.AssemblyInfo.Version);
-		public override string Prefix { get; } = Callvote.AssemblyInfo.ConfigPrefix;
+		public override string Prefix { get; } = Callvote.AssemblyInfo.LangFile;
 		public override Version RequiredExiledVersion { get; } = new Version(4, 0, 12);
 		public override PluginPriority Priority { get; } = PluginPriority.Default;
 
