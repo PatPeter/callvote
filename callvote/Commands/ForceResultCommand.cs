@@ -39,7 +39,7 @@ namespace callvote.Commands
                         }
                     }
                 }
-                response = Plugin.Instance.StopvoteHandler(player);
+                //response = Plugin.Instance.StopvoteHandler(player);
             }
             return false;
         }

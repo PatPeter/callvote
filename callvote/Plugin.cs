@@ -78,7 +78,7 @@ namespace callvote
 			}
 			if (DictionaryOfVotes.ContainsKey(player.Id))
 			{
-				if(DictionaryOfVotes[player.Id] > Plugin.Instance.Config.MaxAmountOfVotesPerRound -1)
+				if(DictionaryOfVotes[player.Id] > Plugin.Instance.Config.MaxAmountOfVotesPerRound -1 && !player.CheckPermission("cv.unlimitedvotes"))
 				{
 					return "Max amounts of votes done this round";
 				}
