@@ -17,7 +17,7 @@ namespace callvote
 		public override string Author { get; } = Callvote.AssemblyInfo.Author;
 		public override Version Version { get; } = new Version(Callvote.AssemblyInfo.Version);
 		public override string Prefix { get; } = Callvote.AssemblyInfo.LangFile;
-		public override Version RequiredExiledVersion { get; } = new Version(4, 0, 12);
+		public override Version RequiredExiledVersion { get; } = new Version(5, 1, 3);
 		public override PluginPriority Priority { get; } = PluginPriority.Default;
 
 		//Instance variable for eventhandlers
