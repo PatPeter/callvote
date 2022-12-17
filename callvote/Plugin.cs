@@ -86,7 +86,7 @@ namespace callvote
 				if (args.Length == 0)
 			{
 				//return new string[] { "callvote RestartRound", "callvote Kick <player>", "callvote <custom> [options]" };
-				return "callvote Kick/Kill/<custom> <player>/[options]";
+				return "callvote Kick/Kill/Nuke/RespawnWave/RestartRound/<custom> <player>/[options]";
 			}
 			else
 			{
