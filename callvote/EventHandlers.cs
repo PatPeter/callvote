@@ -2,17 +2,17 @@
 using System.Text.RegularExpressions;
 using MEC;
 using System.Linq;
+using PluginAPI.Core;
+using PluginAPI.Core.Attributes;
 
 namespace callvote
 {
-	using Exiled.Events.EventArgs;
-    using Exiled.Permissions.Extensions;
-
     public class EventHandlers
 	{
 		public Plugin plugin;
 		public EventHandlers(Plugin plugin) => this.plugin = plugin;
 
+		[PluginEvent(PluginAPI.Enums.ServerEventType.WaitingForPlayers)]
 		public void OnWaitingForPlayers()
 		{
 			//this.plugin.ReloadConfig();
@@ -25,7 +25,8 @@ namespace callvote
 			this.plugin.CurrentVote = null;
 		}
 
-		public void OnRoundEnded(RoundEndedEventArgs ev)
+		[PluginEvent(PluginAPI.Enums.ServerEventType.RoundEnd)]
+		public void OnRoundEnded()
 		{
 			plugin.StopVote();
 		}

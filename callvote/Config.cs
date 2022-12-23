@@ -1,17 +1,14 @@
-﻿	using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using UnityEngine;
 
 namespace callvote
 {
-	using System.Collections.Generic;
-	using System.ComponentModel;
-
-	using Exiled.API.Interfaces;
-
-	public sealed class Config : IConfig
+	public sealed class Config
 	{
 		//internal List<string> _AllowedRoles = new List<string>() { "owner", "admin", "moderator" };
 		/*internal int _VoteDuration = 30;
@@ -32,19 +29,58 @@ namespace callvote
 		/// <inheritdoc/>
 		[Description("Enable or disable the plugin. Defaults to true.")]
 		public bool IsEnabled { get; set; } = true;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int VoteDuration { get; set; } = 30;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int VoteCooldown { get; set; } = 60;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int MaxAmountOfVotesPerRound { get; set; } = 10;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableKick { get; set; } = false;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableKill { get; set; } = false;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableNuke { get; set; } = false;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableRespawnWave { get; set; } = false;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableRestartRound { get; set; } = false;
 
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int ThresholdKick { get; set; } = 30;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int ThresholdKill { get; set; } = 30;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int ThresholdNuke { get; set; } = 30;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int ThresholdRespawnWave { get; set; } = 30;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public int ThresholdRestartRound { get; set; } = 30;
 	}
 }

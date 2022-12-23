@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommandSystem;
-using Exiled.API.Features;
-using Exiled.Permissions.Extensions;
+using PluginAPI.Core;
+using PluginAPI.Core.Attributes;
 using RemoteAdmin;
 using UnityEngine;
 
@@ -23,11 +23,11 @@ namespace callvote.Commands
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             response = "";
-            Player player = Player.Get(((CommandSender)sender).SenderId);
-            if (sender is PlayerCommandSender)
+			Player player = Server.GetPlayers<Player>().Where(sid => sid.UserId == ((CommandSender)sender).SenderId).First();
+			if (sender is PlayerCommandSender)
             {
                 var plr = sender as PlayerCommandSender;
-                if (player.CheckPermission("cv.superadmin+"))
+                if (Misc.CheckPermission(sender, PlayerPermissions.ServerConsoleCommands))
                 {
                     var args = arguments.Array;
                     if (args.Length > 0)
