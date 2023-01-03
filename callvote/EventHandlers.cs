@@ -6,7 +6,8 @@ using System.Linq;
 namespace callvote
 {
 	using Exiled.Events.EventArgs;
-    using Exiled.Permissions.Extensions;
+	using Exiled.Events.EventArgs.Server;
+	using Exiled.Permissions.Extensions;
 
     public class EventHandlers
 	{

@@ -6,6 +6,8 @@ using Exiled.API.Features;
 using MEC;
 using Exiled.Permissions.Extensions;
 using Exiled.API.Enums;
+using GameCore;
+using Log = Exiled.API.Features.Log;
 
 namespace callvote
 {
@@ -15,9 +17,9 @@ namespace callvote
 
 		public override string Name { get; } = Callvote.AssemblyInfo.Name;
 		public override string Author { get; } = Callvote.AssemblyInfo.Author;
-		public override Version Version { get; } = new Version(Callvote.AssemblyInfo.Version);
+		public override System.Version Version { get; } = new System.Version(Callvote.AssemblyInfo.Version);
 		public override string Prefix { get; } = Callvote.AssemblyInfo.LangFile;
-		public override Version RequiredExiledVersion { get; } = new Version(5, 1, 3);
+		public override System.Version RequiredExiledVersion { get; } = new System.Version(5, 1, 3);
 		public override PluginPriority Priority { get; } = PluginPriority.Default;
 
 		//Instance variable for eventhandlers

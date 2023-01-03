@@ -12,7 +12,7 @@ using UnityEngine;
 namespace callvote.Commands
 {
     [CommandHandler(typeof(ClientCommandHandler))]
-    class forceresultCommand : ICommand
+    class ForceResultCommand : ICommand
     {
         public string Command => "forceresult";
 
@@ -32,12 +32,11 @@ namespace callvote.Commands
                     var args = arguments.Array;
                     if (args.Length > 0)
                     {
-                        int option;
-                        if (int.TryParse(args[0], out option))
-                        {
-                            response = Plugin.Instance.Rigging(option);
-                        }
-                    }
+						if (int.TryParse(args[0], out int option))
+						{
+							response = Plugin.Instance.Rigging(option);
+						}
+					}
                 }
                 //response = Plugin.Instance.StopvoteHandler(player);
             }
