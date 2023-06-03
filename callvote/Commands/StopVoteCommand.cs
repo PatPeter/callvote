@@ -11,25 +11,25 @@ using UnityEngine;
 
 namespace callvote.Commands
 {
-    [CommandHandler(typeof(ClientCommandHandler))]
-    class StopVoteCommand : ICommand
-    {
-        public string Command => "stopvote";
+	[CommandHandler(typeof(ClientCommandHandler))]
+	class StopVoteCommand : ICommand
+	{
+		public string Command => "stopvote";
 
-        public string[] Aliases => null;
+		public string[] Aliases => null;
 
-        public string Description => "screw pat for putting this off";
+		public string Description => "";
 
-        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-        {
-            response = "";
-            Player player = Player.Get(((CommandSender)sender).SenderId);
-            if (sender is PlayerCommandSender)
-            {
-                var plr = sender as PlayerCommandSender;
-                response = Plugin.Instance.StopvoteHandler(player);
-            }
-            return false;
-        }
-    }
+		public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
+		{
+			response = "";
+			Player player = Player.Get(((CommandSender)sender).SenderId);
+			if (sender is PlayerCommandSender)
+			{
+				var plr = sender as PlayerCommandSender;
+				response = Plugin.Instance.StopvoteHandler(player);
+			}
+			return false;
+		}
+	}
 }
