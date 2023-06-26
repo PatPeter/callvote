@@ -312,9 +312,10 @@ namespace callvote
 										Plugin.Instance.Broadcast(5, votePercent + "% voted yes. Restarting the round...");
 										//this.Server.Round.RestartRound();
 										//PlayerManager.localPlayer.GetComponent<PlayerStats>().Roundrestart();
-										Round.Restart();
+										//Round.Restart();
+										RoundSummary.singleton.ForceEnd();
 
-									}
+                                    }
 									else
 									{
 										Plugin.Instance.Broadcast(5, "Only " + votePercent + "% voted yes. " + Plugin.Instance.Config.ThresholdRestartRound + "% was required to restart the round.");
