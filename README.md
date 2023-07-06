@@ -17,6 +17,9 @@ Server Command | Client Command | Parameters | Description
 callvote | .callvote | "Custom Question" | Vote on a custom yes/no question.
 callvote | .callvote | "Custom Question" "First Option" "Second Option" ... | Vote on a question with multiple options
 callvote Kick | .callvote Kick | [player] | Vote to kick a player.
+callvote Kill | .callvote Kill | [player] | Vote to kill a player.
+callvote Nuke | .callvote Nuke | [none] | Vote to nuke the map.
+callvote RespawnWave | .callvote RespawnWave | [none] | Vote to respawn wave.
 callvote RestartRound | .callvote RestartRound | [none] | Vote to restart a round.
 stopvote | .stopvote | [none] | Stops a vote currently in progress
 yes | .yes | [none] | Alias for 1
