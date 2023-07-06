@@ -450,6 +450,11 @@ namespace callvote
 			Server.SendBroadcast(message, duration);
 		}
 
+		public void PlayerBroadcast(Player player, ushort duration, string message)
+		{
+			player.SendBroadcast(message, duration);
+		}
+
 		public string StopvoteHandler(Player player)
 		{
 
