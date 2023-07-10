@@ -11,8 +11,6 @@ using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
 
-
-
 namespace callvote
 {
 	public class Plugin
@@ -20,13 +18,13 @@ namespace callvote
 		public static Plugin Instance { get; private set; } = new Plugin();
 
 		[PluginConfig]
-		public Config Config;
+		public Config Config = new Config();
 
 		public string Name { get; } = Callvote.AssemblyInfo.Name;
 		public string Author { get; } = Callvote.AssemblyInfo.Author;
 		public Version Version { get; } = new Version(Callvote.AssemblyInfo.Version);
 		public string Prefix { get; } = Callvote.AssemblyInfo.LangFile;
-		public Version RequiredExiledVersion { get; } = new Version(5, 1, 3);
+		//public Version RequiredExiledVersion { get; } = new Version(5, 1, 3);
 		//public PluginPriority Priority { get; } = PluginPriority.Default;
 
 		//Instance variable for eventhandlers
@@ -40,13 +38,15 @@ namespace callvote
 		public void OnEnabled()
 		{
 			Instance = this;
-			//ReloadConfig();
+			Config = new Config();
+
 			try
 			{
 				Log.Debug("Initializing event handlers..");
 				//Set instance varible to a new instance, this should be nulled again in OnDisable
 				EventHandlers = new EventHandlers(this);
-				
+				EventManager.RegisterEvents(this, EventHandlers);
+
 				Log.Info($"callvote loaded!");
 			}
 			catch (Exception e)
@@ -330,23 +330,30 @@ namespace callvote
 
 						default:
 							//voteInProgress = true;
-
-							if (args.Length == 1)
+							if (Plugin.Instance.Config.EnableCustom)
 							{
-								Log.Info("Binary vote called by " + playerNickname + ": " + string.Join(" ", args));
-								options[1] = "Yes";
-								options[2] = "No";
+								if (args.Length == 1)
+								{
+									Log.Info("Binary vote called by " + playerNickname + ": " + string.Join(" ", args));
+									options[1] = "Yes";
+									options[2] = "No";
+								}
+								else
+								{
+									Log.Info("Multiple-choice vote called by " + playerNickname + ": " + string.Join(" ", args));
+									for (int i = 1; i < args.Length; i++)
+									{
+										options[i] = args[i];
+									}
+								}
+								voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: " + args[0], options), null));
+								break;
 							}
 							else
 							{
-								Log.Info("Multiple-choice vote called by " + playerNickname + ": " + string.Join(" ", args));
-								for (int i = 1; i < args.Length; i++)
-								{
-									options[i] = args[i];
-								}
+								return "callvote \"Custom Vote\" is not enabled.";
 							}
-							voteCoroutine = Timing.RunCoroutine(StartVoteCoroutine(new Vote(playerNickname + " asks: " + args[0], options), null));
-							break;
+
 					}
 					timeOfLastVote = (int)(DateTime.Now - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
 					return "Vote has been started!";

@@ -44,6 +44,10 @@ namespace callvote
 
 		/// <inheritdoc/>
 		[Description("")]
+		public bool EnableCustom { get; set; } = true;
+
+		/// <inheritdoc/>
+		[Description("")]
 		public bool EnableKick { get; set; } = false;
 
 		/// <inheritdoc/>

@@ -4,6 +4,7 @@ using MEC;
 using System.Linq;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
+using static RoundSummary;
 
 namespace callvote
 {
@@ -26,7 +27,7 @@ namespace callvote
 		}
 
 		[PluginEvent(PluginAPI.Enums.ServerEventType.RoundEnd)]
-		public void OnRoundEnded()
+		public void OnRoundEnded(LeadingTeam leadingTeam)
 		{
 			plugin.StopVote();
 		}
