@@ -103,7 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CallVoteCommand.cs" />
-    <Compile Include="Commands\ForceResultCommand.cs" />
     <Compile Include="Commands\NoCommand.cs" />
     <Compile Include="Commands\Number10Command.cs" />
     <Compile Include="Commands\Number2Command.cs" />
@@ -114,10 +113,13 @@
     <Compile Include="Commands\Number7Command.cs" />
     <Compile Include="Commands\Number8Command.cs" />
     <Compile Include="Commands\Number9Command.cs" />
-    <Compile Include="Commands\NumberVotingCommand.cs" />
+    <Compile Include="Commands\Number1Command.cs" />
     <Compile Include="Commands\StopVoteCommand.cs" />
     <Compile Include="Commands\YesCommand.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Configs\ToggleCommands.cs" />
+    <Compile Include="Configs\Localizations.cs" />
+    <Compile Include="Configs\Thresholds.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,7 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Northwood.PluginAPI">
-      <Version>13.1.1</Version>
+      <Version>13.1.2</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
       <Version>11.0.1</Version>
