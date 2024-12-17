@@ -5,7 +5,7 @@ This is a plugin for [EXILED](https://github.com/Exiled-Team/EXILED) that allows
 Setting Key | Value Type | Default Value | Description
 --- | --- | --- | ---
 vote_duration | integer | 30 | Number of seconds for a vote to last for.
-vote_cooldown | integer | 5 | Cooldown (in seconds) between each command
+vote_cooldown | integer | 5 | Cooldown (in seconds) between each callvote.
 max_amount_of_votes_per_round | float | 10 | Maximum amount of **callvotes** in a round
 max_wait_kill | float | 0 | Time (in seconds) after the round starts to the command **callvote kill** be available
 max_wait_kick | float | 0 | Time (in seconds) after the round starts to the command **callvote kick** be available
