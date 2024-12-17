@@ -65,3 +65,6 @@ no | .no | [none] | Alias for 2
 8 | .8 | [none] | Vote for the 8th option
 9 | .9 | [none] | Vote for the 9th option
 0 | .0 | [none] | Vote for the 10th option
+
+
+Special thanks to: https://github.com/Playeroth
