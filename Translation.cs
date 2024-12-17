@@ -11,7 +11,7 @@ namespace callvote
 {
     public class Translation : ITranslation
     {
-        [Description("%player%, %VotePercent%, %Offender%, %ThresholdKick%, %ThresholdRespawnWave%, %ThresholdNuke%, %ThresholdKill%, %ThresholdRestartRound%, %OptionKey%, %Option%, %Counter%")]
+        [Description("%player%, %VotePercent%, %Offender%, %ThresholdKick%, %ThresholdRespawnWave%, %ThresholdNuke%, %ThresholdKill%, %ThresholdRestartRound%, %OptionKey%, %Option%, %Counter%, %Timer%")]
         //%player%, %VotePercent%, %offender%, %ThresholdKick%
         public string MaxVote { get; private set; } = "Max amounts of votes done this round";
         public string InProgressVote { get; private set; } = "A vote is currently in progress.";
