@@ -18,14 +18,11 @@ namespace callvote
 		public int VoteDuration { get; set; } = 30;
 		public int VoteCooldown { get; set; } = 5;
 		public int MaxAmountOfVotesPerRound { get; set; } = 10;
-		public float MaxWaitGeneral { get; set; } = 0;
 		public float MaxWaitKill { get; set; } = 0;
 		public float MaxWaitKick { get; set; } = 0;
 		public float MaxWaitNuke { get; set; } = 0;
 		public float MaxWaitRespawnWave { get; set; } =  0;
 		public float MaxWaitRestartRound { get; set; } = 0;
-		public float MaxWaitBinary { get; set; } = 0;
-		public float MaxWaitMultipleChoice{ get; set; } = 0;
 		public bool EnableKick { get; set; } = true;
 		public bool EnableKill { get; set; } = true;
 		public bool EnableNuke { get; set; } = true;
