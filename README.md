@@ -1,5 +1,5 @@
 # Description
-This is a plugin for [EXILED](https://github.com/Exiled-Team/EXILED) that allows calling Kick, RestartRound, or custom votes using console commands using the same format as the Source Engine (Left 4 Dead 2/Counter-Strike: Global Offensive).
+This is a plugin for [EXILED](https://github.com/Exiled-Team/EXILED) that allows calling Kick, RestartRound, Kill, RespawnWave or custom votes using console commands using the same format as the Source Engine (Left 4 Dead 2/Counter-Strike: Global Offensive).
 
 ## Configuration Settings
 Setting Key | Value Type | Default Value | Description
