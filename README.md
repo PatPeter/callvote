@@ -39,7 +39,6 @@ cv.callvotecustom | .callvote "Custom Question" ... | Gives permission to use **
 cv.stopvote | .stopvote | Stops current vote
 cv.untouchable | .callvote kick/kill | Player cannot be kicked or killed
 cv.superadmin+ | .callvote kick/kill | Allows player to rig the system
-cv.bypass | .callvote <parameter> | Bypasses permissions requeriments and time
 
 
 ## Commands
