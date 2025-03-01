@@ -27,7 +27,7 @@ namespace callvote.Commands
 			if (sender is PlayerCommandSender)
 			{
 				var plr = sender as PlayerCommandSender;
-				response = Plugin.Instance.VoteHandler(player, 2);
+				response = VoteHandlers.VoteHandler.Voting (player, "no");
 			}
 			return false;
 		}

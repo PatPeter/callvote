@@ -9,6 +9,7 @@ using Exiled.Permissions.Extensions;
 using RemoteAdmin;
 using UnityEngine;
 
+
 namespace callvote.Commands
 {
 	[CommandHandler(typeof(ClientCommandHandler))]
@@ -27,7 +28,7 @@ namespace callvote.Commands
 			if (sender is PlayerCommandSender)
 			{
 				var plr = sender as PlayerCommandSender;
-				response = Plugin.Instance.StopvoteHandler(player);
+				response = VoteHandlers.VoteHandler.StopVote();
 			}
 			return false;
 		}

@@ -11,21 +11,21 @@ namespace callvote
 {
     public class Translation : ITranslation
     {
-        [Description("%player%, %VotePercent%, %Offender%, %ThresholdKick%, %ThresholdRespawnWave%, %ThresholdNuke%, %ThresholdKill%, %ThresholdRestartRound%, %OptionKey%, %Option%, %Counter%, %Timer%")]
+        [Description("%player%, %VotePercent%, %Offender%, %ThresholdKick%, %ThresholdRespawnWave%, %ThresholdNuke%, %ThresholdKill%, %ThresholdRestartRound%, %OptionKey%, %Option%, %Counter%, %Timer%, %Custom%")]
         //%player%, %VotePercent%, %offender%, %ThresholdKick%
         public string MaxVote { get; private set; } = "Max amounts of votes done this round";
         public string InProgressVote { get; private set; } = "A vote is currently in progress.";
         public string PlayersWithSameName { get; private set; } = "Multiple players have a name or partial name of %Player%. Please use a different search string.";
         public string OptionYes { get; private set; } = "<color=green>YES</color>";
         public string OptionNo { get; private set; } = "<color=red>NO</color>";
-        public string PlayerGettingKicked { get; private set; } = "%Player% asks: Kick %Offender% ?";
+        public string PlayerGettingKicked { get; private set; } = "%Player% asks: Kick %Offender% for %Reason%?";
         public string AskedToKill { get; private set; } = "%Player% Asks: Kill %Offender% ";
         public string Untouchable { get; private set; } = "%VotePercent%% Voted to kill you.";
         public string NotSuccessFullKick { get; private set; } = "%VotePercent%% voted yes. %ThresholdKick%% was required to kill. %Offender%.";
         public string PlayerNotFound { get; private set; } = "Did not find any players with the name or partial name of %Player%";
         public string NoOptionAvailable { get; private set; } = "Vote does not have that option.";
         public string AlreadyVoted { get; private set; } = "You've already voted.";
-        public string VoteAccepted { get; private set; } = "Vote accepted!";
+        public string VoteAccepted { get; private set; } = "You voted %Reason%.";
         public string NoPermissionToVote { get; private set; } = "You do not have permission to run this command!";
         public string CallVoteEnded { get; private set; } = "Vote stopped.";
         public string Results { get; private set; } = "Final results:\n";
@@ -55,6 +55,7 @@ namespace callvote
         public string VoteStarted { get; private set; } = "Vote has been started!";
         public string NoCallVoteInProgress { get; private set; } = "There is no vote in progress.";
         public string WaitToVote { get; private set; } = "You should wait %Timer%s before using this command.";
+        public string CustomVote { get; private set; } = "%Player% asks: %Custom%";
 
     }
 }
