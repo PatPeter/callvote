@@ -1,7 +1,9 @@
 Modified BSD License
 ====================
 
-_Copyright © 2019, Nicholas Solin a.k.a. PatPeter_  
+_Copyright © 2019-2024, Nicholas Solin a.k.a. PatPeter_
+_Copyright © 2021-2022, babyboucher_
+_Copyright © 2025, Unbistrackted_
 _All rights reserved._
 
 Redistribution and use in source and binary forms, with or without
@@ -12,7 +14,7 @@ modification, are permitted provided that the following conditions are met:
 2. Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-3. Neither the name of the Universal Gaming Alliance nor the
+3. Neither the name of the Universal Gaming Alliance, a.k.a. Unigamia, nor the
    names of its contributors may be used to endorse or promote products
    derived from this software without specific prior written permission.
 
