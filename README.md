@@ -1,5 +1,8 @@
-﻿# Description
-This is a plugin for [EXILED](https://github.com/Exiled-Team/EXILED) that allows calling Kick, RestartRound, or custom votes using console commands using the same format as the Source Engine (Left 4 Dead 2/Counter-Strike: Global Offensive).
+﻿# callvote End-Of-Life Announcement
+**callvote** now has a new home at [callvote](https://github.com/Unbistrackted/callvote) where its main contributor will be [Unbistrackted](https://github.com/Unbistrackted)! The original implementation of callvote was in ServerMod2, then Exiled, and finally NWAPI (so that we would not have to wait for EXILED updates and it would work immediately after each update). I shut down the Unigamia.com servers in September 2023 and therefore have no server to test new plugin versions on in order to maintain this repository. With the announcement that NWAPI is going to be deprecated in favor of LabAPI, I have decided that I will never code plugins for SCP:SL ever again.
+
+# Description
+This is a plugin for [EXILED](https://github.com/Exiled-Team/EXILED) that allows calling Kick, RestartRound, or custom votes using console commands using the same format as the Source Engine. For instance, in [Counter-Strike: Global Offensive](https://www.reddit.com/r/GlobalOffensive/comments/2zote3/callvote_command_syntax/) and [Left 4 Dead 2](https://www.reddit.com/r/l4d2/comments/1ny3gi/question_about_vote_console_commands/) the command syntax is the same. For anyone who wants to complain about the command syntax, bring it up with Valve.
 
 ## Configuration Settings
 Setting Key | Value Type | Default Value | Description
