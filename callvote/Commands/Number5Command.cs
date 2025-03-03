@@ -18,7 +18,7 @@ namespace callvote.Commands
 
         public string[] Aliases => new string[] { };
 
-        public string Description => "screw pat for putting this off";
+        public string Description => Plugin.Instance.Config.Localizations.DescriptionNumber5;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -33,7 +33,7 @@ namespace callvote.Commands
                 }
                 else
                 {
-                    response = "No vote is in progress.";
+                    response = Plugin.Instance.Config.Localizations.NoVoteInProgress;
                 }
             }
             return false;

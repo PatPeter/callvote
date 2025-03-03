@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using UnityEngine;
+using callvote.Configs;
 
 namespace callvote
 {
@@ -31,60 +32,21 @@ namespace callvote
 		public bool IsEnabled { get; set; } = true;
 
 		/// <inheritdoc/>
-		[Description("")]
+		[Description("Number of seconds for a vote to last for.")]
 		public int VoteDuration { get; set; } = 30;
 
 		/// <inheritdoc/>
-		[Description("")]
+		[Description("Number of seconds between votes to prevent vote spam.")]
 		public int VoteCooldown { get; set; } = 60;
 
 		/// <inheritdoc/>
 		[Description("")]
 		public int MaxAmountOfVotesPerRound { get; set; } = 10;
 
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableCustom { get; set; } = true;
+		public ToggleCommands ToggleCommands = new ToggleCommands();
 
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableKick { get; set; } = false;
+		public Thresholds Thresholds = new Thresholds();
 
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableKill { get; set; } = false;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableNuke { get; set; } = false;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableRespawnWave { get; set; } = false;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public bool EnableRestartRound { get; set; } = false;
-
-
-		/// <inheritdoc/>
-		[Description("")]
-		public int ThresholdKick { get; set; } = 30;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public int ThresholdKill { get; set; } = 30;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public int ThresholdNuke { get; set; } = 30;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public int ThresholdRespawnWave { get; set; } = 30;
-
-		/// <inheritdoc/>
-		[Description("")]
-		public int ThresholdRestartRound { get; set; } = 30;
+		public Localizations Localizations = new Localizations();
 	}
 }

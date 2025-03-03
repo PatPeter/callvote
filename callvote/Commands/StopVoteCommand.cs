@@ -18,7 +18,7 @@ namespace callvote.Commands
 
         public string[] Aliases => null;
 
-        public string Description => "screw pat for putting this off";
+        public string Description => Plugin.Instance.Config.Localizations.DescriptionStopvote;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {

@@ -19,7 +19,7 @@ namespace callvote.Commands
 
         public string[] Aliases => null;
 
-        public string Description => "screw pat for putting this off";
+        public string Description => Plugin.Instance.Config.Localizations.DescriptionCallvote;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -42,7 +42,7 @@ namespace callvote.Commands
                 }
                 else
                 {
-                    response = "You do not have permission to run this command";
+                    response = Plugin.Instance.Config.Localizations.NoPermission;
                 }
             }
             return false;

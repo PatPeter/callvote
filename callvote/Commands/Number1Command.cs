@@ -12,13 +12,13 @@ using UnityEngine;
 namespace callvote.Commands
 {
     [CommandHandler(typeof(ClientCommandHandler))]
-    class NumberVotingCommand : ICommand
+    class Number1Command : ICommand
     {
         public string Command => "1";
 
-        public string[] Aliases => new string[] { };
+        public string[] Aliases => new string[] { "yes", "Yes" };
 
-        public string Description => "screw pat for putting this off";
+        public string Description => Plugin.Instance.Config.Localizations.DescriptionNumber1;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -33,7 +33,7 @@ namespace callvote.Commands
                 }
                 else
                 {
-                    response = "No vote is in progress.";
+                    response = Plugin.Instance.Config.Localizations.NoVoteInProgress;
                 }
             }
             return false;
